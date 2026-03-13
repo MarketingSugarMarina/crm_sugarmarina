@@ -41,7 +41,7 @@ const PAGE_META = {
 
 function showPage(name) {
   PAGES.forEach(p => {
-    document.getElementById(`page-${p}`).classList.toggle('hidden', p !== name);
+    document.getElementById(`page-${p}`).style.display = (p === name) ? 'block' : 'none';
     document.getElementById(`nav-${p}`)?.classList.toggle('active', p === name);
   });
   const [title, sub] = PAGE_META[name] || ['—', ''];
@@ -203,7 +203,7 @@ function updateActiveFiltersUI(search, verified, branchId) {
   }
 
   tags.innerHTML = pills.join('');
-  row.classList.toggle('hidden', pills.length === 0);
+  row.style.display = pills.length === 0 ? 'none' : 'flex';
 
   // Show/hide clear-X button on search input
   document.getElementById('clearSearchBtn')?.classList.toggle('hidden', !search);
@@ -345,7 +345,7 @@ function openAddGuestModal() {
   document.getElementById('guestModalSub').textContent   = 'กรอกข้อมูลแขกและบันทึก';
   document.getElementById('guestForm').reset();
   document.getElementById('guestId').value = '';
-  document.getElementById('emailVerifiedBadge').classList.add('hidden');
+  document.getElementById('emailVerifiedBadge').style.display = 'none';
   clearAllErrors([['firstName','err-firstName'],['lastName','err-lastName'],['guestEmail','err-email']]);
   openModal('guestModal');
 }
@@ -449,8 +449,8 @@ function openOTPModal(guestId, email, sendImmediately = false) {
   _otpEmail   = email;
   document.getElementById('otpEmailDisplay').textContent = maskEmail(email);
   document.getElementById('otpError').classList.remove('show');
-  document.getElementById('otpSuccess').classList.add('hidden');
-  document.getElementById('otpActions').classList.remove('hidden');
+  document.getElementById('otpSuccess').style.display = 'none';
+  document.getElementById('otpActions').style.display = 'block';
   // Clear OTP boxes
   document.querySelectorAll('.otp-input').forEach(inp => {
     inp.value = '';
@@ -514,8 +514,8 @@ async function verifyOTPModal() {
     if (res.ok) {
       // Show success state
       document.getElementById('otpError').classList.remove('show');
-      document.getElementById('otpSuccess').classList.remove('hidden');
-      document.getElementById('otpActions').classList.add('hidden');
+      document.getElementById('otpSuccess').style.display = 'block';
+      document.getElementById('otpActions').style.display = 'none';
       clearInterval(_otpCountdown);
       toast('✅ ยืนยันอีเมลสำเร็จ!', 'success');
       // Update table badge immediately without resetting filters
@@ -578,7 +578,7 @@ async function openStayModal(guestId) {
   document.getElementById('stayGuestId').value = guestId;
   document.getElementById('stayForm').reset();
   document.getElementById('stayGuestId').value = guestId;
-  document.getElementById('checkoutPreview').classList.add('hidden');
+  document.getElementById('checkoutPreview').style.display = 'none';
   clearAllErrors([['stayBranchId','err-stayBranch'],['stayCheckIn','err-stayCheckin'],['stayNights','err-stayNights']]);
 
   // Load guest profile
@@ -589,7 +589,7 @@ async function openStayModal(guestId) {
   document.getElementById('stayGuestName').textContent   = `${g.first_name} ${g.last_name}`;
   document.getElementById('stayGuestEmail').textContent  = g.email;
   document.getElementById('stayGuestNat').innerHTML      = g.nationality
-    ? `<span class="px-2 py-0.5 bg-white rounded-full text-xs font-semibold text-slate-600 border border-slate-200">${esc(g.nationality)}</span>`
+    ? `<span style="background:#fff;border:1px solid #e5e9f0;border-radius:20px;padding:3px 10px;font-size:.75rem;font-weight:600;color:#374151;">${esc(g.nationality)}</span>`
     : '';
 
   openModal('stayModal');
@@ -604,31 +604,22 @@ function renderStayHistory(stays) {
     return;
   }
   wrap.innerHTML = `
-    <table class="w-full text-sm">
+    <table class="tbl">
       <thead><tr>
-        <th class="text-left text-xs font-semibold text-slate-500 uppercase px-4 py-2.5 bg-slate-50 border-b">สาขา</th>
-        <th class="text-left text-xs font-semibold text-slate-500 uppercase px-4 py-2.5 bg-slate-50 border-b">Check-in</th>
-        <th class="text-left text-xs font-semibold text-slate-500 uppercase px-4 py-2.5 bg-slate-50 border-b">Check-out</th>
-        <th class="text-left text-xs font-semibold text-slate-500 uppercase px-4 py-2.5 bg-slate-50 border-b">คืน</th>
-        <th class="text-left text-xs font-semibold text-slate-500 uppercase px-4 py-2.5 bg-slate-50 border-b">Preferences</th>
-        <th class="px-4 py-2.5 bg-slate-50 border-b"></th>
+        <th>สาขา</th><th>Check-in</th><th>Check-out</th><th>คืน</th><th>Preferences</th><th></th>
       </tr></thead>
       <tbody>
         ${stays.map(s => `
-          <tr class="hover:bg-slate-50 transition-colors">
-            <td class="px-4 py-3 border-b border-slate-50">
-              <div class="font-medium text-slate-700 text-xs">${esc(s.branch_name)}</div>
-              <div class="text-[10px] text-slate-400 font-mono">${esc(s.branch_slug)}</div>
+          <tr>
+            <td>
+              <div style="font-weight:600;color:#0f172a;font-size:.825rem;">${esc(s.branch_name)}</div>
+              <div style="font-size:.7rem;color:#9ca3af;font-family:monospace;">${esc(s.branch_slug)}</div>
             </td>
-            <td class="px-4 py-3 border-b border-slate-50 text-slate-500 text-xs">${fmtDate(s.check_in_date)}</td>
-            <td class="px-4 py-3 border-b border-slate-50 text-slate-500 text-xs">${fmtDate(s.check_out_date)}</td>
-            <td class="px-4 py-3 border-b border-slate-50">
-              <span class="px-2 py-0.5 bg-ocean-50 text-ocean-600 rounded-full text-xs font-bold">${s.nights}คืน</span>
-            </td>
-            <td class="px-4 py-3 border-b border-slate-50 text-slate-400 text-xs max-w-32 truncate">${esc(s.preferences) || '—'}</td>
-            <td class="px-4 py-3 border-b border-slate-50">
-              <button class="btn-danger py-1" onclick="deleteStayInModal(${s.id}, ${s.guest_id})">🗑️</button>
-            </td>
+            <td style="color:#6b7280;font-size:.8rem;">${fmtDate(s.check_in_date)}</td>
+            <td style="color:#6b7280;font-size:.8rem;">${fmtDate(s.check_out_date)}</td>
+            <td><span style="background:#eef2f9;color:#1e3f84;border-radius:20px;padding:2px 9px;font-size:.75rem;font-weight:700;">${s.nights}คืน</span></td>
+            <td style="color:#9ca3af;font-size:.775rem;max-width:140px;" class="truncate">${esc(s.preferences) || '—'}</td>
+            <td><button class="btn btn-danger" onclick="deleteStayInModal(${s.id}, ${s.guest_id})">🗑️</button></td>
           </tr>`).join('')}
       </tbody>
     </table>`;
@@ -641,10 +632,9 @@ function updateCheckoutPreview() {
   const el = document.getElementById('checkoutPreview');
   if (co) {
     document.getElementById('checkoutDate').textContent = fmtDate(co + 'T00:00:00');
-    el.classList.remove('hidden');
-    el.classList.add('flex');
+    el.style.display = 'block';
   } else {
-    el.classList.add('hidden');
+    el.style.display = 'none';
   }
 }
 
@@ -683,7 +673,7 @@ async function saveStay(e) {
 
     toast('✓ บันทึกการเข้าพักแล้ว', 'success');
     document.getElementById('stayForm').reset();
-    document.getElementById('checkoutPreview').classList.add('hidden');
+    document.getElementById('checkoutPreview').style.display = 'none';
 
     // Refresh stay history inside modal
     const g = await fetch(`${API}/guests/${guestId}`).then(r => r.json());
@@ -717,7 +707,7 @@ async function openAddStayModal() {
   if (gSel.options.length <= 1) allGuests.forEach(g => gSel.add(new Option(`${g.first_name} ${g.last_name} (${g.email})`, g.id)));
   if (bSel.options.length <= 1) branches.forEach(b => bSel.add(new Option(b.name, b.id)));
   document.getElementById('addStayForm').reset();
-  document.getElementById('addCheckoutPreview').classList.add('hidden');
+  document.getElementById('addCheckoutPreview').style.display = 'none';
   openModal('addStayModal');
 }
 function updateAddCheckout() {
@@ -725,8 +715,8 @@ function updateAddCheckout() {
   const n  = document.getElementById('addStayNights').value;
   const co = calcCheckout(d, n);
   const el = document.getElementById('addCheckoutPreview');
-  if (co) { document.getElementById('addCheckoutDate').textContent = fmtDate(co+'T00:00:00'); el.classList.remove('hidden'); el.classList.add('flex'); }
-  else el.classList.add('hidden');
+  if (co) { document.getElementById('addCheckoutDate').textContent = fmtDate(co+'T00:00:00'); el.style.display = 'block'; }
+  else el.style.display = 'none';
 }
 async function saveStandaloneStay(e) {
   e.preventDefault();
@@ -797,8 +787,8 @@ async function loadBranchesPage() {
 }
 
 // ══════════════════════════════════════════════════════ MODAL HELPERS ══════════
-function openModal(id)  { document.getElementById(id).classList.remove('hidden'); }
-function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
 document.querySelectorAll('.modal-backdrop').forEach(el => {
   el.addEventListener('click', function(e) { if (e.target === this) closeModal(this.id); });
