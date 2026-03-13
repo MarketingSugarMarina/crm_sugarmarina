@@ -25,6 +25,7 @@ async function initDB() {
         phone          VARCHAR(20),
         birthday       DATE,
         nationality    VARCHAR(80),
+        notes          TEXT,
         email_verified BOOLEAN   DEFAULT FALSE,
         created_at     TIMESTAMP DEFAULT NOW(),
         updated_at     TIMESTAMP DEFAULT NOW()
