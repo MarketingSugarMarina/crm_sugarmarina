@@ -11,16 +11,9 @@
         extend: {
           colors: {
             ocean: {
-              50:  '#f0f8fb',
-              100: '#d9eef5',
-              200: '#b3ddeb',
-              300: '#7ec4d8',
-              400: '#44a3bf',
-              500: '#2888a6',
-              600: '#1A6B8A',
-              700: '#175d78',
-              800: '#174e64',
-              900: '#174254',
+              50:  '#f0f8fb', 100: '#d9eef5', 200: '#b3ddeb',
+              300: '#7ec4d8', 400: '#44a3bf', 500: '#2888a6',
+              600: '#1A6B8A', 700: '#175d78', 800: '#174e64', 900: '#174254',
             }
           }
         }
@@ -28,435 +21,515 @@
     }
   </script>
   <style>
-    [x-cloak] { display: none; }
-    .sidebar-link { @apply flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-300 text-sm font-medium transition-colors hover:bg-slate-700 hover:text-white; }
+    .sidebar-link { @apply flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-300 text-sm font-medium transition-colors hover:bg-slate-700 hover:text-white cursor-pointer; }
     .sidebar-link.active { @apply bg-ocean-600 text-white; }
     .stat-card { @apply bg-white rounded-xl p-5 shadow-sm border border-slate-100 flex items-center gap-4; }
     .badge-verified   { @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700; }
     .badge-unverified { @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700; }
-    .progress-bar { @apply h-2 rounded-full bg-ocean-500 transition-all duration-500; }
-    .btn-primary { @apply inline-flex items-center gap-2 bg-ocean-600 hover:bg-ocean-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors; }
-    .btn-secondary { @apply inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold transition-colors; }
-    .btn-danger { @apply inline-flex items-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors; }
-    .btn-icon { @apply inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors; }
-    .form-input { @apply w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ocean-400 focus:border-transparent; }
-    .form-label { @apply block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wide; }
-    .spinner { @apply animate-spin rounded-full h-6 w-6 border-2 border-ocean-200 border-t-ocean-600; }
+    .progress-bar { @apply h-2 rounded-full bg-ocean-500 transition-all duration-700; }
+    .btn-primary   { @apply inline-flex items-center gap-2 bg-ocean-600 hover:bg-ocean-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors; }
+    .btn-secondary { @apply inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 disabled:opacity-50 disabled:cursor-not-allowed text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold transition-colors; }
+    .btn-danger    { @apply inline-flex items-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors; }
+    .btn-icon      { @apply inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors; }
+    .btn-amber     { @apply inline-flex items-center gap-2 bg-amber-50 hover:bg-amber-100 disabled:opacity-50 disabled:cursor-not-allowed text-amber-700 px-3 py-2 rounded-lg text-xs font-semibold transition-colors; }
+    .form-input  { @apply w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ocean-400 focus:border-transparent transition; }
+    .form-input.error { @apply border-red-400 focus:ring-red-300; }
+    .form-label  { @apply block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wide; }
+    .field-error { @apply text-red-500 text-xs mt-1 hidden; }
+    .field-error.show { @apply block; }
+    .spinner     { @apply animate-spin rounded-full h-5 w-5 border-2 border-ocean-200 border-t-ocean-600; }
+    .spinner-sm  { @apply animate-spin rounded-full h-4 w-4 border-2 border-white/40 border-t-white inline-block; }
     tbody tr { @apply hover:bg-slate-50 transition-colors; }
     th { @apply text-left text-xs font-semibold text-slate-500 uppercase tracking-wide px-4 py-3 bg-slate-50 border-b border-slate-100; }
     td { @apply px-4 py-3 text-sm border-b border-slate-50; }
     .modal-backdrop { @apply fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4; }
     .modal-box { @apply bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto; }
-    #toast { @apply fixed bottom-6 right-6 z-[999] px-5 py-3 rounded-xl text-sm font-semibold shadow-xl transition-all duration-300 translate-y-2 opacity-0 pointer-events-none border-l-4; }
-    #toast.show { @apply translate-y-0 opacity-100; }
-    #toast.success { @apply bg-white text-slate-800 border-emerald-500; }
-    #toast.error   { @apply bg-white text-slate-800 border-red-500; }
-    #toast.info    { @apply bg-white text-slate-800 border-ocean-500; }
+    .modal-header { @apply flex items-center justify-between px-6 py-5 border-b border-slate-100 sticky top-0 bg-white rounded-t-2xl z-10; }
+    .modal-close  { @apply w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold text-sm cursor-pointer transition-colors; }
+    /* Search highlight */
+    mark { @apply bg-yellow-200 text-yellow-900 rounded px-0.5 not-italic; font-style: normal; }
+    /* Filter tag */
+    .filter-tag { @apply inline-flex items-center gap-1 px-2.5 py-1 bg-ocean-50 text-ocean-700 rounded-full text-xs font-semibold; }
+    /* OTP Inputs */
+    .otp-input { @apply w-12 h-14 text-center text-xl font-bold border-2 border-slate-200 rounded-xl focus:outline-none focus:border-ocean-500 focus:ring-2 focus:ring-ocean-200 transition caret-transparent; }
+    .otp-input.filled { @apply border-ocean-400 bg-ocean-50; }
+    .otp-input.error  { @apply border-red-400 bg-red-50; }
+    /* Toast */
+    #toast { @apply fixed bottom-6 right-6 z-[999] flex items-center gap-3 px-5 py-3.5 rounded-xl text-sm font-semibold shadow-xl border-l-4 bg-white text-slate-800 transition-all duration-300 pointer-events-none; opacity:0; transform:translateY(8px); }
+    #toast.show { opacity:1; transform:translateY(0); }
+    #toast.success { @apply border-emerald-500; }
+    #toast.error   { @apply border-red-500; }
+    #toast.info    { @apply border-ocean-500; }
   </style>
 </head>
-<body class="bg-slate-100 font-sans">
-
-<!-- ═══════════════════════════════════════════════════════ LAYOUT ══ -->
+<body class="bg-slate-100 font-sans antialiased">
 <div class="flex min-h-screen">
 
-  <!-- ── Sidebar ──────────────────────────────────────────────────── -->
-  <aside class="w-60 bg-slate-800 min-h-screen flex flex-col fixed top-0 left-0 bottom-0 z-40">
-    <!-- Brand -->
-    <div class="px-5 py-5 border-b border-slate-700">
-      <div class="text-2xl mb-1">🌊</div>
-      <div class="text-white font-bold text-sm leading-tight">Sugar Marina</div>
-      <div class="text-ocean-300 text-xs font-semibold tracking-widest uppercase mt-0.5">Hotel Collection</div>
+<!-- ══════════════════════════════════════════════════ SIDEBAR ══ -->
+<aside class="w-60 bg-slate-800 min-h-screen flex flex-col fixed top-0 left-0 bottom-0 z-40">
+  <div class="px-5 py-5 border-b border-slate-700">
+    <div class="text-2xl mb-1">🌊</div>
+    <div class="text-white font-bold text-sm leading-tight">Sugar Marina</div>
+    <div class="text-ocean-300 text-[10px] font-semibold tracking-widest uppercase mt-0.5">Hotel Collection</div>
+  </div>
+  <nav class="px-3 py-4 flex-1">
+    <p class="text-slate-500 text-[10px] font-bold uppercase tracking-widest px-2 mb-2">Main Menu</p>
+    <div class="sidebar-link active" id="nav-dashboard" onclick="showPage('dashboard')"><span>📊</span> Dashboard</div>
+    <div class="sidebar-link" id="nav-guests"    onclick="showPage('guests')">  <span>👥</span> แขก (Guests)</div>
+    <div class="sidebar-link" id="nav-stays"     onclick="showPage('stays')">   <span>🏨</span> ประวัติการพัก</div>
+    <p class="text-slate-500 text-[10px] font-bold uppercase tracking-widest px-2 mb-2 mt-6">ข้อมูล</p>
+    <div class="sidebar-link" id="nav-branches"  onclick="showPage('branches')"><span>🏢</span> สาขา</div>
+  </nav>
+  <div class="px-5 py-4 border-t border-slate-700 text-xs text-slate-500 leading-relaxed">
+    Sugar Marina Hotel<br/>Kata Beach, Phuket
+  </div>
+</aside>
+
+<!-- ═══════════════════════════════════════════════════ MAIN ══ -->
+<div class="ml-60 flex-1 flex flex-col">
+
+  <!-- Top Bar -->
+  <header class="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between sticky top-0 z-30">
+    <div>
+      <h1 class="font-bold text-slate-800 text-base" id="pageTitle">Dashboard</h1>
+      <p class="text-xs text-slate-400 mt-0.5" id="pageSubtitle">ภาพรวมระบบ CRM</p>
     </div>
-
-    <!-- Navigation -->
-    <nav class="px-3 py-4 flex-1">
-      <p class="text-slate-500 text-[10px] font-bold uppercase tracking-widest px-2 mb-2">Main Menu</p>
-      <a class="sidebar-link active" id="nav-dashboard" onclick="showPage('dashboard')">
-        <span>📊</span> Dashboard
-      </a>
-      <a class="sidebar-link" id="nav-guests" onclick="showPage('guests')">
-        <span>👥</span> แขก (Guests)
-      </a>
-      <a class="sidebar-link" id="nav-stays" onclick="showPage('stays')">
-        <span>🏨</span> ประวัติการพัก
-      </a>
-
-      <p class="text-slate-500 text-[10px] font-bold uppercase tracking-widest px-2 mb-2 mt-6">ข้อมูล</p>
-      <a class="sidebar-link" id="nav-branches" onclick="showPage('branches')">
-        <span>🏢</span> สาขา
-      </a>
-    </nav>
-
-    <div class="px-5 py-4 border-t border-slate-700 text-xs text-slate-500 leading-relaxed">
-      Sugar Marina Hotel<br/>Kata Beach, Phuket
+    <div class="flex items-center gap-3">
+      <div class="text-right">
+        <div class="text-sm font-semibold text-slate-700">Front Desk</div>
+        <div class="text-xs text-slate-400">Reception</div>
+      </div>
+      <div class="w-9 h-9 bg-ocean-600 rounded-full flex items-center justify-center text-white text-xs font-bold">FD</div>
     </div>
-  </aside>
+  </header>
 
-  <!-- ── Main ─────────────────────────────────────────────────────── -->
-  <div class="ml-60 flex-1 flex flex-col">
-
-    <!-- Top Bar -->
-    <header class="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between sticky top-0 z-30">
-      <div>
-        <h1 class="font-bold text-slate-800" id="pageTitle">Dashboard</h1>
-        <p class="text-xs text-slate-400 mt-0.5" id="pageSubtitle">ภาพรวมระบบ CRM</p>
+  <!-- ══════════════════════════════════════ PAGE: DASHBOARD ══ -->
+  <main id="page-dashboard" class="p-8">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+      <div class="stat-card border-l-4 border-ocean-500">
+        <div class="w-11 h-11 rounded-xl bg-ocean-50 flex items-center justify-center text-xl shrink-0">👥</div>
+        <div><div class="text-2xl font-bold text-slate-800" id="d-total">—</div><div class="text-xs text-slate-500 mt-0.5">แขกทั้งหมด</div></div>
       </div>
-      <div class="flex items-center gap-3">
-        <div class="text-right">
-          <div class="text-sm font-semibold text-slate-700">Front Desk</div>
-          <div class="text-xs text-slate-400">Reception</div>
-        </div>
-        <div class="w-9 h-9 bg-ocean-600 rounded-full flex items-center justify-center text-white text-xs font-bold">FD</div>
+      <div class="stat-card border-l-4 border-emerald-400">
+        <div class="w-11 h-11 rounded-xl bg-emerald-50 flex items-center justify-center text-xl shrink-0">✅</div>
+        <div><div class="text-2xl font-bold text-slate-800" id="d-verified">—</div><div class="text-xs text-slate-500 mt-0.5">ยืนยันอีเมลแล้ว</div></div>
       </div>
-    </header>
-
-    <!-- ════════════════════════════════════════ PAGE: DASHBOARD ══ -->
-    <main id="page-dashboard" class="p-8">
-
-      <!-- Stat Cards -->
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-        <div class="stat-card">
-          <div class="w-11 h-11 rounded-xl bg-ocean-50 flex items-center justify-center text-xl">👥</div>
-          <div>
-            <div class="text-2xl font-bold text-slate-800" id="d-total">—</div>
-            <div class="text-xs text-slate-500 font-medium mt-0.5">แขกทั้งหมด</div>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="w-11 h-11 rounded-xl bg-emerald-50 flex items-center justify-center text-xl">✅</div>
-          <div>
-            <div class="text-2xl font-bold text-slate-800" id="d-verified">—</div>
-            <div class="text-xs text-slate-500 font-medium mt-0.5">ยืนยันอีเมลแล้ว</div>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="w-11 h-11 rounded-xl bg-amber-50 flex items-center justify-center text-xl">⏳</div>
-          <div class="flex items-start gap-2">
-            <div>
-              <div class="text-2xl font-bold text-slate-800" id="d-unverified">—</div>
-              <div class="text-xs text-slate-500 font-medium mt-0.5">รอยืนยันอีเมล</div>
-            </div>
-            <span id="d-unverified-badge" class="hidden mt-1 px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-bold rounded-full">!</span>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="w-11 h-11 rounded-xl bg-purple-50 flex items-center justify-center text-xl">📅</div>
-          <div>
-            <div class="text-2xl font-bold text-slate-800" id="d-stays">—</div>
-            <div class="text-xs text-slate-500 font-medium mt-0.5">การเข้าพักทั้งหมด</div>
-          </div>
+      <div class="stat-card border-l-4 border-amber-400">
+        <div class="w-11 h-11 rounded-xl bg-amber-50 flex items-center justify-center text-xl shrink-0">⏳</div>
+        <div class="flex items-start gap-2">
+          <div><div class="text-2xl font-bold text-slate-800" id="d-unverified">—</div><div class="text-xs text-slate-500 mt-0.5">รอยืนยันอีเมล</div></div>
+          <span id="d-unverified-badge" class="hidden mt-1 px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-bold rounded-full">!</span>
         </div>
       </div>
-
-      <!-- Bottom Grid: Top Branches + Recent Guests -->
-      <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
-
-        <!-- Top Branches -->
-        <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-100 p-6">
-          <h2 class="font-bold text-slate-700 mb-4 flex items-center gap-2">
-            🏆 <span>สาขายอดนิยม</span>
-          </h2>
-          <div id="branchStats" class="space-y-3">
-            <div class="flex justify-center py-4"><div class="spinner"></div></div>
-          </div>
-        </div>
-
-        <!-- Recent Guests -->
-        <div class="lg:col-span-3 bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-          <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-            <h2 class="font-bold text-slate-700 flex items-center gap-2">🕐 <span>แขกล่าสุด</span></h2>
-            <button class="text-xs text-ocean-600 font-semibold hover:underline" onclick="showPage('guests')">ดูทั้งหมด →</button>
-          </div>
-          <table class="w-full">
-            <thead>
-              <tr>
-                <th>ชื่อ</th>
-                <th>สัญชาติ</th>
-                <th>สถานะ</th>
-                <th>วันที่สร้าง</th>
-              </tr>
-            </thead>
-            <tbody id="recentGuests">
-              <tr><td colspan="4" class="text-center py-8 text-slate-400">
-                <div class="flex justify-center"><div class="spinner"></div></div>
-              </td></tr>
-            </tbody>
-          </table>
-        </div>
-
+      <div class="stat-card border-l-4 border-purple-400">
+        <div class="w-11 h-11 rounded-xl bg-purple-50 flex items-center justify-center text-xl shrink-0">📅</div>
+        <div><div class="text-2xl font-bold text-slate-800" id="d-stays">—</div><div class="text-xs text-slate-500 mt-0.5">การเข้าพักทั้งหมด</div></div>
       </div>
-    </main>
-
-    <!-- ════════════════════════════════════════ PAGE: GUESTS ══════ -->
-    <main id="page-guests" class="p-8 hidden">
-
-      <!-- Filter Bar -->
-      <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-4 mb-5">
-        <div class="flex flex-wrap gap-3 items-end">
-
-          <!-- Search -->
-          <div class="flex-1 min-w-48">
-            <label class="form-label">ค้นหา</label>
-            <div class="relative">
-              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">🔍</span>
-              <input id="filterSearch" type="text" class="form-input pl-8"
-                     placeholder="ชื่อ, อีเมล, เบอร์, สัญชาติ…"
-                     oninput="debounceGuestSearch()" />
-            </div>
-          </div>
-
-          <!-- Verified filter -->
-          <div class="min-w-40">
-            <label class="form-label">สถานะอีเมล</label>
-            <select id="filterVerified" class="form-input" onchange="loadGuests()">
-              <option value="">ทั้งหมด</option>
-              <option value="true">✅ ยืนยันแล้ว</option>
-              <option value="false">⏳ รอยืนยัน</option>
-            </select>
-          </div>
-
-          <!-- Branch filter -->
-          <div class="min-w-52">
-            <label class="form-label">สาขา</label>
-            <select id="filterBranch" class="form-input" onchange="loadGuests()">
-              <option value="">ทุกสาขา</option>
-            </select>
-          </div>
-
-          <button class="btn-primary" onclick="openAddModal()">＋ เพิ่มแขกใหม่</button>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+      <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-100 p-6">
+        <h2 class="font-bold text-slate-700 mb-4 flex items-center gap-2 text-sm">🏆 สาขายอดนิยม</h2>
+        <div id="branchStats" class="space-y-3">
+          <div class="flex justify-center py-4"><div class="spinner"></div></div>
         </div>
       </div>
-
-      <!-- Table Card -->
-      <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-        <!-- Table Header -->
-        <div class="px-5 py-3 border-b border-slate-100 flex items-center justify-between">
-          <p class="text-sm text-slate-600" id="guestCountLabel">กำลังโหลด…</p>
-          <!-- Pagination controls -->
-          <div class="flex items-center gap-2 text-sm">
-            <button id="prevPage" onclick="changePage(-1)"
-                    class="px-3 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold disabled:opacity-40"
-                    disabled>← ก่อน</button>
-            <span id="pageInfo" class="text-slate-500 text-xs min-w-20 text-center">หน้า 1 / 1</span>
-            <button id="nextPage" onclick="changePage(1)"
-                    class="px-3 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold disabled:opacity-40"
-                    disabled>ถัดไป →</button>
-          </div>
-        </div>
-
-        <div class="overflow-x-auto">
-          <table class="w-full whitespace-nowrap">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>ชื่อ-นามสกุล</th>
-                <th>อีเมล</th>
-                <th>เบอร์โทร</th>
-                <th>สัญชาติ</th>
-                <th>วันเกิด</th>
-                <th>สถานะอีเมล</th>
-                <th>Stay</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="guestBody">
-              <tr><td colspan="9" class="text-center py-12 text-slate-400">
-                <div class="flex justify-center mb-2"><div class="spinner"></div></div>
-                กำลังโหลดข้อมูล…
-              </td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </main>
-
-    <!-- ════════════════════════════════════════ PAGE: STAYS ═══════ -->
-    <main id="page-stays" class="p-8 hidden">
-      <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+      <div class="lg:col-span-3 bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
         <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-          <h2 class="font-bold text-slate-700">ประวัติการเข้าพักทั้งหมด</h2>
-          <button class="btn-primary" onclick="openAddStayModal()">＋ เพิ่ม Stay</button>
+          <h2 class="font-bold text-slate-700 text-sm flex items-center gap-2">🕐 แขกล่าสุด</h2>
+          <button class="text-xs text-ocean-600 font-semibold hover:underline" onclick="showPage('guests')">ดูทั้งหมด →</button>
         </div>
+        <table class="w-full"><thead><tr><th>ชื่อ</th><th>สัญชาติ</th><th>สถานะ</th><th>วันที่สร้าง</th></tr></thead>
+        <tbody id="recentGuests"><tr><td colspan="4" class="text-center py-8"><div class="flex justify-center"><div class="spinner"></div></div></td></tr></tbody></table>
+      </div>
+    </div>
+  </main>
+
+  <!-- ══════════════════════════════════════ PAGE: GUESTS ══════ -->
+  <main id="page-guests" class="p-8 hidden">
+    <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-4 mb-5">
+      <div class="flex flex-wrap gap-3 items-end">
+        <!-- Search -->
+        <div class="flex-1 min-w-48">
+          <label class="form-label">ค้นหา</label>
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none">🔍</span>
+            <input id="filterSearch" type="text" class="form-input pl-8 pr-8"
+                   placeholder="ชื่อ, อีเมล, เบอร์, สัญชาติ…"
+                   oninput="debounceGuestSearch()" />
+            <button id="clearSearchBtn" onclick="clearSearchInput()"
+                    class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500 hidden text-lg leading-none">×</button>
+          </div>
+        </div>
+        <!-- Verified filter -->
+        <div class="min-w-40">
+          <label class="form-label">สถานะอีเมล</label>
+          <select id="filterVerified" class="form-input" onchange="applyFilters()">
+            <option value="">ทั้งหมด</option>
+            <option value="true">✅ ยืนยันแล้ว</option>
+            <option value="false">⏳ รอยืนยัน</option>
+          </select>
+        </div>
+        <!-- Branch filter -->
+        <div class="min-w-52">
+          <label class="form-label">สาขา</label>
+          <select id="filterBranch" class="form-input" onchange="applyFilters()">
+            <option value="">ทุกสาขา</option>
+          </select>
+        </div>
+        <button class="btn-primary" onclick="openAddGuestModal()">＋ เพิ่มแขกใหม่</button>
+      </div>
+
+      <!-- Active filters row -->
+      <div id="activeFiltersRow" class="hidden mt-3 pt-3 border-t border-slate-100 flex items-center gap-2 flex-wrap">
+        <span class="text-xs text-slate-500 font-semibold">ตัวกรองที่ใช้:</span>
+        <div id="filterTags" class="flex gap-2 flex-wrap"></div>
+        <button onclick="clearAllFilters()"
+                class="ml-auto text-xs text-red-500 hover:text-red-700 font-semibold flex items-center gap-1">
+          ✕ ล้างตัวกรองทั้งหมด
+        </button>
+      </div>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+      <div class="px-5 py-3 border-b border-slate-100 flex items-center justify-between">
+        <p class="text-sm text-slate-600" id="guestCountLabel">กำลังโหลด…</p>
+        <div class="flex items-center gap-2">
+          <button id="prevPage" onclick="changePage(-1)" class="px-3 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed" disabled>← ก่อน</button>
+          <span id="pageInfo" class="text-slate-500 text-xs min-w-24 text-center">หน้า 1 / 1</span>
+          <button id="nextPage" onclick="changePage(1)"  class="px-3 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed" disabled>ถัดไป →</button>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
         <table class="w-full whitespace-nowrap">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>แขก</th>
-              <th>สาขา</th>
-              <th>Check-in</th>
-              <th>Check-out</th>
-              <th>คืน</th>
-              <th>Preferences</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="staysBody">
-            <tr><td colspan="8" class="text-center py-12">
-              <div class="flex justify-center mb-2"><div class="spinner"></div></div>
+          <thead><tr>
+            <th>#</th><th>ชื่อ-นามสกุล</th><th>อีเมล</th><th>เบอร์โทร</th>
+            <th>สัญชาติ</th><th>วันเกิด</th><th>สถานะอีเมล</th><th>Stay</th><th>Actions</th>
+          </tr></thead>
+          <tbody id="guestBody">
+            <tr><td colspan="9" class="text-center py-12 text-slate-400">
+              <div class="flex justify-center mb-2"><div class="spinner"></div></div>กำลังโหลด…
             </td></tr>
           </tbody>
         </table>
       </div>
-    </main>
+    </div>
+  </main>
 
-    <!-- ════════════════════════════════════════ PAGE: BRANCHES ════ -->
-    <main id="page-branches" class="p-8 hidden">
-      <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-        <div class="px-6 py-4 border-b border-slate-100">
-          <h2 class="font-bold text-slate-700">11 สาขา Sugar Marina Hotel Collection</h2>
-        </div>
-        <table class="w-full">
-          <thead>
-            <tr>
-              <th>#</th><th>ชื่อสาขา</th><th>Slug</th>
-              <th>จำนวน Stay</th><th>จำนวนแขก</th><th>สัดส่วน</th>
-            </tr>
-          </thead>
-          <tbody id="branchesBody">
-            <tr><td colspan="6" class="text-center py-12">
-              <div class="flex justify-center"><div class="spinner"></div></div>
-            </td></tr>
-          </tbody>
-        </table>
+  <!-- ══════════════════════════════════════ PAGE: STAYS ═══════ -->
+  <main id="page-stays" class="p-8 hidden">
+    <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+        <h2 class="font-bold text-slate-700">ประวัติการเข้าพักทั้งหมด</h2>
+        <button class="btn-primary" onclick="openAddStayModal()">＋ เพิ่ม Stay</button>
       </div>
-    </main>
+      <table class="w-full whitespace-nowrap">
+        <thead><tr><th>#</th><th>แขก</th><th>สาขา</th><th>Check-in</th><th>Check-out</th><th>คืน</th><th>Preferences</th><th>Actions</th></tr></thead>
+        <tbody id="staysBody">
+          <tr><td colspan="8" class="text-center py-12"><div class="flex justify-center mb-2"><div class="spinner"></div></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
 
-  </div><!-- /main -->
+  <!-- ══════════════════════════════════════ PAGE: BRANCHES ════ -->
+  <main id="page-branches" class="p-8 hidden">
+    <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+      <div class="px-6 py-4 border-b border-slate-100">
+        <h2 class="font-bold text-slate-700">11 สาขา Sugar Marina Hotel Collection</h2>
+      </div>
+      <table class="w-full">
+        <thead><tr><th>#</th><th>ชื่อสาขา</th><th>Slug</th><th>จำนวน Stay</th><th>จำนวนแขก</th><th>สัดส่วน</th></tr></thead>
+        <tbody id="branchesBody">
+          <tr><td colspan="6" class="text-center py-12"><div class="flex justify-center"><div class="spinner"></div></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+</div><!-- /main -->
 </div><!-- /flex -->
 
-<!-- ═══════════════════════════════════ MODAL: ADD/EDIT GUEST ══════ -->
+<!-- ════════════════════════════════ MODAL 1: ADD / EDIT GUEST ══ -->
 <div id="guestModal" class="modal-backdrop hidden">
   <div class="modal-box">
-    <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100">
-      <h3 class="font-bold text-slate-800" id="modalTitle">เพิ่มแขกใหม่</h3>
-      <button onclick="closeModal('guestModal')"
-              class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold">✕</button>
+    <div class="modal-header">
+      <div>
+        <h3 class="font-bold text-slate-800 text-base" id="guestModalTitle">เพิ่มแขกใหม่</h3>
+        <p class="text-xs text-slate-400 mt-0.5" id="guestModalSub">กรอกข้อมูลแขกและบันทึก</p>
+      </div>
+      <button class="modal-close" onclick="closeModal('guestModal')">✕</button>
     </div>
     <div class="px-6 py-5">
-      <form id="guestForm" onsubmit="saveGuest(event)">
+      <form id="guestForm" onsubmit="saveGuest(event)" novalidate>
         <input type="hidden" id="guestId" />
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-2 gap-x-4 gap-y-4">
+
+          <!-- First Name -->
           <div>
-            <label class="form-label">ชื่อ *</label>
-            <input id="firstName" class="form-input" required placeholder="Somchai" />
+            <label class="form-label">ชื่อ <span class="text-red-400">*</span></label>
+            <input id="firstName" class="form-input" placeholder="Somchai" autocomplete="given-name" />
+            <p class="field-error" id="err-firstName">กรุณากรอกชื่อ</p>
           </div>
+          <!-- Last Name -->
           <div>
-            <label class="form-label">นามสกุล *</label>
-            <input id="lastName" class="form-input" required placeholder="Jaidee" />
+            <label class="form-label">นามสกุล <span class="text-red-400">*</span></label>
+            <input id="lastName" class="form-input" placeholder="Jaidee" autocomplete="family-name" />
+            <p class="field-error" id="err-lastName">กรุณากรอกนามสกุล</p>
           </div>
+
+          <!-- Email -->
           <div class="col-span-2">
-            <label class="form-label">อีเมล *</label>
-            <input id="guestEmail" type="email" class="form-input" required placeholder="guest@example.com" />
+            <label class="form-label">อีเมล <span class="text-red-400">*</span></label>
+            <div class="relative">
+              <input id="guestEmail" type="email" class="form-input pr-28" placeholder="guest@example.com" autocomplete="email" />
+              <span id="emailVerifiedBadge" class="hidden absolute right-2 top-1/2 -translate-y-1/2"></span>
+            </div>
+            <p class="field-error" id="err-email">กรุณากรอกอีเมลที่ถูกต้อง</p>
           </div>
+
+          <!-- Phone -->
           <div>
             <label class="form-label">เบอร์โทร</label>
-            <input id="phone" class="form-input" placeholder="+66 81 234 5678" />
+            <input id="phone" class="form-input" placeholder="+66 81 234 5678" autocomplete="tel" />
           </div>
-          <div>
-            <label class="form-label">สัญชาติ</label>
-            <input id="nationality" class="form-input" placeholder="Thai" />
-          </div>
+          <!-- Birthday -->
           <div>
             <label class="form-label">วันเกิด</label>
             <input id="birthday" type="date" class="form-input" />
           </div>
-          <div>
-            <label class="form-label">หมายเลขพาสปอร์ต</label>
-            <input id="passportNo" class="form-input" placeholder="AA123456" />
-          </div>
+
+          <!-- Nationality dropdown -->
           <div class="col-span-2">
-            <label class="form-label">หมายเหตุ</label>
-            <textarea id="notes" class="form-input resize-none h-20" placeholder="Allergies, VIP, preferences…"></textarea>
+            <label class="form-label">สัญชาติ</label>
+            <select id="nationality" class="form-input">
+              <option value="">— เลือกสัญชาติ —</option>
+              <option value="Thai">🇹🇭 ไทย</option>
+              <option value="American">🇺🇸 อเมริกัน</option>
+              <option value="British">🇬🇧 อังกฤษ</option>
+              <option value="Chinese">🇨🇳 จีน</option>
+              <option value="Japanese">🇯🇵 ญี่ปุ่น</option>
+              <option value="Korean">🇰🇷 เกาหลี</option>
+              <option value="Australian">🇦🇺 ออสเตรเลีย</option>
+              <option value="French">🇫🇷 ฝรั่งเศส</option>
+              <option value="German">🇩🇪 เยอรมัน</option>
+              <option value="Russian">🇷🇺 รัสเซีย</option>
+              <option value="Singaporean">🇸🇬 สิงคโปร์</option>
+              <option value="Malaysian">🇲🇾 มาเลเซีย</option>
+              <option value="Indian">🇮🇳 อินเดีย</option>
+              <option value="Hong Kong">🇭🇰 ฮ่องกง</option>
+              <option value="Canadian">🇨🇦 แคนาดา</option>
+              <option value="Other">🌍 อื่นๆ</option>
+            </select>
           </div>
 
-          <!-- OTP section: shown only when editing existing guest -->
-          <div id="otpSection" class="col-span-2 hidden">
-            <div class="border-t border-slate-100 pt-4 mt-1">
-              <label class="form-label">📧 ยืนยันอีเมล (OTP)</label>
-              <div class="flex gap-2 items-center mt-1.5">
-                <input id="otpCode" class="form-input font-mono tracking-widest text-center text-lg"
-                       maxlength="6" placeholder="• • • • • •" style="max-width:140px" />
-                <button type="button" class="btn-secondary text-xs" onclick="sendOTP()">📨 ส่ง OTP</button>
-                <button type="button" class="btn-primary  text-xs" onclick="verifyOTP()">✅ ยืนยัน</button>
-              </div>
-            </div>
+          <!-- Notes -->
+          <div class="col-span-2">
+            <label class="form-label">หมายเหตุ / Notes</label>
+            <textarea id="notes" class="form-input resize-none h-20" placeholder="Allergies, VIP status, special preferences…"></textarea>
           </div>
         </div>
+
         <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-slate-100">
           <button type="button" class="btn-secondary" onclick="closeModal('guestModal')">ยกเลิก</button>
-          <button type="submit" class="btn-primary">💾 บันทึก</button>
+          <button type="submit" id="guestSubmitBtn" class="btn-primary">
+            <span id="guestSubmitText">💾 บันทึก</span>
+          </button>
         </div>
       </form>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════ MODAL: ADD/EDIT STAY ═══════ -->
+<!-- ════════════════════════════════ MODAL 2: OTP VERIFICATION ══ -->
+<div id="otpModal" class="modal-backdrop hidden">
+  <div class="modal-box max-w-md">
+    <div class="modal-header">
+      <div>
+        <h3 class="font-bold text-slate-800 text-base">ยืนยันอีเมล</h3>
+        <p class="text-xs text-slate-400 mt-0.5">กรอกรหัส OTP ที่ส่งไปยังอีเมลของท่าน</p>
+      </div>
+      <button class="modal-close" onclick="closeModal('otpModal')">✕</button>
+    </div>
+    <div class="px-6 py-6 text-center">
+
+      <!-- Email display (masked) -->
+      <div class="inline-flex items-center gap-2 bg-ocean-50 text-ocean-700 px-4 py-2 rounded-full text-sm font-semibold mb-6">
+        📧 <span id="otpEmailDisplay">—</span>
+      </div>
+
+      <!-- OTP 6-box input -->
+      <div class="flex justify-center gap-2 mb-3" id="otpBoxes">
+        <input class="otp-input" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" data-idx="0" />
+        <input class="otp-input" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" data-idx="1" />
+        <input class="otp-input" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" data-idx="2" />
+        <input class="otp-input" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" data-idx="3" />
+        <input class="otp-input" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" data-idx="4" />
+        <input class="otp-input" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" data-idx="5" />
+      </div>
+      <p class="text-xs text-slate-400 mb-1">OTP หมดอายุใน <strong>10 นาที</strong></p>
+      <p class="field-error text-center mb-4" id="otpError">รหัส OTP ไม่ถูกต้องหรือหมดอายุ</p>
+
+      <!-- Success state (hidden by default) -->
+      <div id="otpSuccess" class="hidden mb-4 py-4">
+        <div class="text-4xl mb-2">✅</div>
+        <div class="text-emerald-600 font-bold text-base">ยืนยันอีเมลสำเร็จ!</div>
+      </div>
+
+      <!-- Actions -->
+      <div id="otpActions">
+        <button id="otpVerifyBtn" onclick="verifyOTPModal()" class="btn-primary w-full justify-center mb-3">
+          <span id="otpVerifyText">✅ ยืนยัน OTP</span>
+        </button>
+        <button id="otpResendBtn" onclick="resendOTP()" class="btn-amber w-full justify-center" disabled>
+          📨 ส่ง OTP ใหม่ <span id="otpCountdown" class="font-mono ml-1"></span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════ MODAL 3: STAY HISTORY ══════ -->
 <div id="stayModal" class="modal-backdrop hidden">
-  <div class="modal-box">
-    <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100">
-      <h3 class="font-bold text-slate-800" id="stayModalTitle">เพิ่มประวัติการเข้าพัก</h3>
-      <button onclick="closeModal('stayModal')"
-              class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold">✕</button>
+  <div class="modal-box max-w-2xl">
+    <div class="modal-header">
+      <h3 class="font-bold text-slate-800 text-base" id="stayModalTitle">ประวัติการเข้าพัก</h3>
+      <button class="modal-close" onclick="closeModal('stayModal')">✕</button>
     </div>
     <div class="px-6 py-5">
-      <form id="stayForm" onsubmit="saveStay(event)">
-        <input type="hidden" id="stayId" />
+
+      <!-- Guest profile strip -->
+      <div class="flex items-center gap-4 p-4 bg-ocean-50 rounded-xl mb-5" id="stayGuestProfile">
+        <div class="w-10 h-10 bg-ocean-600 rounded-full flex items-center justify-center text-white font-bold text-sm" id="stayGuestAvatar">?</div>
+        <div>
+          <div class="font-semibold text-slate-800" id="stayGuestName">—</div>
+          <div class="text-xs text-slate-500" id="stayGuestEmail">—</div>
+        </div>
+        <div class="ml-auto" id="stayGuestNat"></div>
+      </div>
+
+      <!-- Stay History Table -->
+      <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">ประวัติการเข้าพัก</h4>
+      <div id="stayHistoryWrap" class="rounded-xl border border-slate-100 overflow-hidden mb-6">
+        <div id="stayHistoryContent" class="flex justify-center py-8">
+          <div class="spinner"></div>
+        </div>
+      </div>
+
+      <!-- Add Stay Form -->
+      <div class="border-t border-slate-100 pt-5">
+        <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-4">＋ เพิ่มการเข้าพักใหม่</h4>
+        <form id="stayForm" onsubmit="saveStay(event)" novalidate>
+          <input type="hidden" id="stayGuestId" />
+          <div class="grid grid-cols-2 gap-4">
+
+            <div class="col-span-2">
+              <label class="form-label">สาขา <span class="text-red-400">*</span></label>
+              <select id="stayBranchId" class="form-input" required onchange="updateCheckoutPreview()">
+                <option value="">— เลือกสาขา —</option>
+              </select>
+              <p class="field-error" id="err-stayBranch">กรุณาเลือกสาขา</p>
+            </div>
+
+            <div>
+              <label class="form-label">วันที่ Check-in <span class="text-red-400">*</span></label>
+              <input id="stayCheckIn" type="date" class="form-input" required oninput="updateCheckoutPreview()" />
+              <p class="field-error" id="err-stayCheckin">กรุณาเลือกวันที่</p>
+            </div>
+
+            <div>
+              <label class="form-label">จำนวนคืน <span class="text-red-400">*</span></label>
+              <input id="stayNights" type="number" min="1" max="365" class="form-input" placeholder="2" required oninput="updateCheckoutPreview()" />
+              <p class="field-error" id="err-stayNights">กรุณาระบุจำนวนคืน</p>
+            </div>
+
+            <!-- Auto-calculated checkout preview -->
+            <div class="col-span-2">
+              <div id="checkoutPreview" class="hidden items-center gap-2 text-sm bg-emerald-50 text-emerald-700 px-4 py-2.5 rounded-lg font-medium">
+                📅 Check-out: <strong id="checkoutDate">—</strong>
+              </div>
+            </div>
+
+            <div class="col-span-2">
+              <label class="form-label">Preferences / ความต้องการพิเศษ</label>
+              <textarea id="stayPreferences" class="form-input resize-none h-16"
+                        placeholder="เช่น ชอบห้องวิวทะเล, แพ้อาหารทะเล, ต้องการเตียงเสริม…"></textarea>
+            </div>
+            <div class="col-span-2">
+              <label class="form-label">Notes (Staff เท่านั้น)</label>
+              <textarea id="stayNotes" class="form-input resize-none h-14" placeholder="หมายเหตุภายใน…"></textarea>
+            </div>
+          </div>
+
+          <div class="flex justify-end gap-3 mt-5 pt-4 border-t border-slate-100">
+            <button type="button" class="btn-secondary" onclick="closeModal('stayModal')">ยกเลิก</button>
+            <button type="submit" id="staySubmitBtn" class="btn-primary">
+              <span id="staySubmitText">🏨 บันทึกการเข้าพัก</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ MODAL 4: ADD STAY (standalone) ══ -->
+<div id="addStayModal" class="modal-backdrop hidden">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 class="font-bold text-slate-800 text-base">เพิ่มประวัติการเข้าพัก</h3>
+      <button class="modal-close" onclick="closeModal('addStayModal')">✕</button>
+    </div>
+    <div class="px-6 py-5">
+      <form id="addStayForm" onsubmit="saveStandaloneStay(event)" novalidate>
         <div class="grid grid-cols-2 gap-4">
           <div class="col-span-2">
-            <label class="form-label">แขก *</label>
-            <select id="stayGuestId" class="form-input" required>
+            <label class="form-label">แขก <span class="text-red-400">*</span></label>
+            <select id="addStayGuestId" class="form-input" required>
               <option value="">— เลือกแขก —</option>
             </select>
           </div>
           <div class="col-span-2">
-            <label class="form-label">สาขา *</label>
-            <select id="stayBranchId" class="form-input" required>
+            <label class="form-label">สาขา <span class="text-red-400">*</span></label>
+            <select id="addStayBranchId" class="form-input" required onchange="updateAddCheckout()">
               <option value="">— เลือกสาขา —</option>
             </select>
           </div>
           <div>
-            <label class="form-label">วันที่ Check-in *</label>
-            <input id="stayCheckIn" type="date" class="form-input" required />
+            <label class="form-label">Check-in <span class="text-red-400">*</span></label>
+            <input id="addStayCheckIn" type="date" class="form-input" required oninput="updateAddCheckout()" />
           </div>
           <div>
-            <label class="form-label">จำนวนคืน *</label>
-            <input id="stayNights" type="number" min="1" class="form-input" required placeholder="2" />
+            <label class="form-label">จำนวนคืน <span class="text-red-400">*</span></label>
+            <input id="addStayNights" type="number" min="1" class="form-input" placeholder="2" required oninput="updateAddCheckout()" />
           </div>
           <div class="col-span-2">
-            <label class="form-label">Preferences / ความต้องการพิเศษ</label>
-            <textarea id="stayPreferences" class="form-input resize-none h-16" placeholder="วิวทะเล, ห้องชั้นสูง, แพ้อาหารทะเล…"></textarea>
+            <div id="addCheckoutPreview" class="hidden items-center gap-2 text-sm bg-emerald-50 text-emerald-700 px-4 py-2.5 rounded-lg font-medium">
+              📅 Check-out: <strong id="addCheckoutDate">—</strong>
+            </div>
+          </div>
+          <div class="col-span-2">
+            <label class="form-label">Preferences</label>
+            <textarea id="addStayPrefs" class="form-input resize-none h-16" placeholder="ห้องวิวทะเล, แพ้อาหารทะเล…"></textarea>
           </div>
           <div class="col-span-2">
             <label class="form-label">Notes (Staff)</label>
-            <textarea id="stayNotes" class="form-input resize-none h-16" placeholder="หมายเหตุสำหรับ staff…"></textarea>
+            <textarea id="addStayNotes" class="form-input resize-none h-14"></textarea>
           </div>
         </div>
         <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-slate-100">
-          <button type="button" class="btn-secondary" onclick="closeModal('stayModal')">ยกเลิก</button>
-          <button type="submit" class="btn-primary">💾 บันทึก</button>
+          <button type="button" class="btn-secondary" onclick="closeModal('addStayModal')">ยกเลิก</button>
+          <button type="submit" class="btn-primary">🏨 บันทึก</button>
         </div>
       </form>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════ MODAL: GUEST STAYS ══════════ -->
-<div id="guestStaysModal" class="modal-backdrop hidden">
-  <div class="modal-box max-w-2xl">
-    <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100">
-      <h3 class="font-bold text-slate-800" id="guestStaysTitle">ประวัติการเข้าพัก</h3>
-      <button onclick="closeModal('guestStaysModal')"
-              class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold">✕</button>
-    </div>
-    <div class="px-6 py-5" id="guestStaysContent">
-      <div class="flex justify-center py-8"><div class="spinner"></div></div>
     </div>
   </div>
 </div>
 
 <!-- Toast -->
-<div id="toast">🔔 <span id="toastMsg"></span></div>
+<div id="toast" style="opacity:0;transform:translateY(8px)">
+  <span id="toastIcon">ℹ️</span>
+  <span id="toastMsg">—</span>
+</div>
 
 <script src="app.js"></script>
 </body>
