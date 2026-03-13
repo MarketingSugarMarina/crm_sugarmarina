@@ -209,6 +209,33 @@ function updateActiveFiltersUI(search, verified, branchId) {
   document.getElementById('clearSearchBtn')?.classList.toggle('hidden', !search);
 }
 
+// ── Export CSV ────────────────────────────────────────────────────────────────
+async function exportGuestsCSV() {
+  const btn = document.getElementById('exportCsvBtn');
+  const orig = btn.innerHTML;
+  btn.innerHTML = '⏳ กำลัง Export…';
+  btn.disabled = true;
+  try {
+    const res = await fetch(`${API}/guests/export`);
+    if (!res.ok) throw new Error('Export failed');
+    const blob = await res.blob();
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    const cd   = res.headers.get('Content-Disposition') || '';
+    const match = cd.match(/filename="([^"]+)"/);
+    a.download = match ? match[1] : 'sugar-marina-guests.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+    toast('Export สำเร็จ', 'success');
+  } catch (err) {
+    toast('Export ไม่สำเร็จ กรุณาลองใหม่', 'error');
+  } finally {
+    btn.innerHTML = orig;
+    btn.disabled = false;
+  }
+}
+
 // Load all guests from server (re-fetches when branch filter changes since that's server-side)
 async function loadGuests() {
   const { branchId } = getFilters();

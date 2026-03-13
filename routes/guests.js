@@ -49,6 +49,87 @@ router.get('/stats', async (req, res) => {
   }
 });
 
+// ── GET /api/guests/export ────────────────────────────────────────────────────
+// Returns CSV file with guest summary data
+router.get('/export', async (req, res) => {
+  try {
+    const { rows } = await pool.query(`
+      SELECT
+        g.id,
+        g.first_name,
+        g.last_name,
+        g.email,
+        g.phone,
+        g.birthday,
+        g.nationality,
+        g.email_verified,
+        g.created_at,
+        COUNT(s.id)                        AS stay_count,
+        MAX(s.check_in_date)               AS last_check_in,
+        (
+          SELECT b.name FROM stays s2
+          JOIN hotel_branches b ON b.id = s2.branch_id
+          WHERE s2.guest_id = g.id
+          ORDER BY s2.check_in_date DESC
+          LIMIT 1
+        )                                  AS last_branch
+      FROM guests g
+      LEFT JOIN stays s ON s.guest_id = g.id
+      GROUP BY g.id
+      ORDER BY g.created_at DESC
+    `);
+
+    function fmtDate(iso) {
+      if (!iso) return '';
+      const d = new Date(iso);
+      const dd = String(d.getDate()).padStart(2, '0');
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const yyyy = d.getFullYear();
+      return `${dd}/${mm}/${yyyy}`;
+    }
+
+    function csvCell(v) {
+      const s = String(v ?? '');
+      return s.includes(',') || s.includes('"') || s.includes('\n')
+        ? `"${s.replace(/"/g, '""')}"` : s;
+    }
+
+    const headers = [
+      'ID','ชื่อ','นามสกุล','อีเมล','เบอร์โทร','วันเกิด','สัญชาติ',
+      'ยืนยันอีเมล','จำนวน Stay','สาขาล่าสุดที่เข้าพัก','วันเข้าพักล่าสุด','วันที่สมัคร'
+    ];
+
+    const csvLines = [headers.join(',')];
+    for (const r of rows) {
+      csvLines.push([
+        r.id,
+        csvCell(r.first_name),
+        csvCell(r.last_name),
+        csvCell(r.email),
+        csvCell(r.phone),
+        fmtDate(r.birthday),
+        csvCell(r.nationality),
+        r.email_verified ? 'ยืนยันแล้ว' : 'รอยืนยัน',
+        r.stay_count,
+        csvCell(r.last_branch),
+        fmtDate(r.last_check_in),
+        fmtDate(r.created_at),
+      ].join(','));
+    }
+
+    const today = new Date().toISOString().substring(0, 10);
+    const BOM   = '\uFEFF';
+    const csv   = BOM + csvLines.join('\r\n');
+
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="sugar-marina-guests-${today}.csv"`);
+    res.send(csv);
+  } catch (err) {
+    console.error('GET /api/guests/export:', err);
+    res.status(500).json({ error: 'Failed to export guests' });
+  }
+});
+
 // ── GET /api/guests ───────────────────────────────────────────────────────────
 // Query params: ?search=  ?verified=true/false  ?branch_id=
 router.get('/', async (req, res) => {
