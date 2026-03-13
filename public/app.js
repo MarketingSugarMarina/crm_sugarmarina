@@ -453,6 +453,48 @@ const exportGuestsCSV = exportCSV;
 
 // ══════════════════════════════════════════════════ GUEST CRUD ════════════════
 
+// ── Stay fields inside Guest Modal ───────────────────────────────────────────
+function toggleStayFields() {
+  const enabled = document.getElementById('enableStayFields').checked;
+  document.getElementById('stayFieldsWrap').style.display = enabled ? 'block' : 'none';
+  if (!enabled) {
+    clearAllErrors([
+      ['guestStayBranch','err-guestStayBranch'],
+      ['guestStayCheckIn','err-guestStayCheckIn'],
+      ['guestStayNights','err-guestStayNights'],
+    ]);
+    document.getElementById('guestStayCheckoutPreview').style.display = 'none';
+  }
+}
+
+function updateGuestStayCheckout() {
+  const d  = document.getElementById('guestStayCheckIn').value;
+  const n  = document.getElementById('guestStayNights').value;
+  const co = calcCheckout(d, n);
+  const el = document.getElementById('guestStayCheckoutPreview');
+  if (co) {
+    document.getElementById('guestStayCheckoutDate').textContent = fmtDate(co + 'T00:00:00');
+    el.style.display = 'block';
+  } else {
+    el.style.display = 'none';
+  }
+}
+
+function _resetGuestStayFields() {
+  document.getElementById('enableStayFields').checked           = false;
+  document.getElementById('stayFieldsWrap').style.display       = 'none';
+  document.getElementById('guestStayCheckoutPreview').style.display = 'none';
+  document.getElementById('guestStayBranch').value  = '';
+  document.getElementById('guestStayCheckIn').value = '';
+  document.getElementById('guestStayNights').value  = '';
+  document.getElementById('guestStayPrefs').value   = '';
+  clearAllErrors([
+    ['guestStayBranch','err-guestStayBranch'],
+    ['guestStayCheckIn','err-guestStayCheckIn'],
+    ['guestStayNights','err-guestStayNights'],
+  ]);
+}
+
 function openAddGuestModal() {
   document.getElementById('guestModalTitle').textContent = 'เพิ่มแขกใหม่';
   document.getElementById('guestModalSub').textContent   = 'กรอกข้อมูลแขกและบันทึก';
@@ -460,6 +502,11 @@ function openAddGuestModal() {
   document.getElementById('guestId').value = '';
   const badge = document.getElementById('emailVerifiedBadge');
   if (badge) badge.style.display = 'none';
+  // Show stay section for new guest; hide for edit
+  document.getElementById('guestStaySection').style.display = 'block';
+  _resetGuestStayFields();
+  // Populate branch dropdown
+  _populateSelect('guestStayBranch', branches, b => ({ value: b.id, label: b.name }), true);
   clearAllErrors([
     ['firstName','err-firstName'],
     ['lastName','err-lastName'],
@@ -488,6 +535,8 @@ async function openEditGuestModal(id) {
       badge.textContent   = g.email_verified ? '✅ ยืนยันแล้ว' : '⏳ รอยืนยัน';
       badge.style.cssText += ';position:absolute;right:10px;top:50%;transform:translateY(-50%);';
     }
+    // Hide stay section on edit (use Stay modal instead)
+    document.getElementById('guestStaySection').style.display = 'none';
     clearAllErrors([
       ['firstName','err-firstName'],
       ['lastName','err-lastName'],
@@ -512,10 +561,26 @@ async function saveGuest(e) {
   const email = document.getElementById('guestEmail').value.trim();
   let valid   = true;
 
-  if (!fn)    { setFieldError('firstName',   'err-firstName', 'กรุณากรอกชื่อ');              valid = false; }
-  if (!ln)    { setFieldError('lastName',    'err-lastName',  'กรุณากรอกนามสกุล');           valid = false; }
+  if (!fn)    { setFieldError('firstName',  'err-firstName', 'กรุณากรอกชื่อ');             valid = false; }
+  if (!ln)    { setFieldError('lastName',   'err-lastName',  'กรุณากรอกนามสกุล');          valid = false; }
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-              { setFieldError('guestEmail',  'err-email',     'กรุณากรอกอีเมลที่ถูกต้อง');  valid = false; }
+              { setFieldError('guestEmail', 'err-email',     'กรุณากรอกอีเมลที่ถูกต้อง'); valid = false; }
+
+  // Validate stay fields if checkbox is checked
+  const stayEnabled = document.getElementById('enableStayFields')?.checked;
+  const stayBranch  = document.getElementById('guestStayBranch')?.value;
+  const stayCheckIn = document.getElementById('guestStayCheckIn')?.value;
+  const stayNights  = document.getElementById('guestStayNights')?.value;
+  if (stayEnabled) {
+    clearAllErrors([
+      ['guestStayBranch','err-guestStayBranch'],
+      ['guestStayCheckIn','err-guestStayCheckIn'],
+      ['guestStayNights','err-guestStayNights'],
+    ]);
+    if (!stayBranch)                { setFieldError('guestStayBranch',  'err-guestStayBranch',  'กรุณาเลือกสาขา');      valid = false; }
+    if (!stayCheckIn)               { setFieldError('guestStayCheckIn', 'err-guestStayCheckIn', 'กรุณาเลือกวันที่');    valid = false; }
+    if (!stayNights || +stayNights < 1) { setFieldError('guestStayNights', 'err-guestStayNights', 'กรุณาระบุจำนวนคืน'); valid = false; }
+  }
   if (!valid) return;
 
   const id  = document.getElementById('guestId').value;
@@ -528,10 +593,10 @@ async function saveGuest(e) {
     first_name:  fn,
     last_name:   ln,
     email,
-    phone:       document.getElementById('phone').value.trim()  || null,
-    birthday:    document.getElementById('birthday').value      || null,
-    nationality: document.getElementById('nationality').value   || null,
-    notes:       document.getElementById('notes').value.trim()  || null,
+    phone:       document.getElementById('phone').value.trim() || null,
+    birthday:    document.getElementById('birthday').value     || null,
+    nationality: document.getElementById('nationality').value  || null,
+    notes:       document.getElementById('notes').value.trim() || null,
   };
 
   try {
@@ -548,11 +613,28 @@ async function saveGuest(e) {
         showToast(data.error || 'บันทึกไม่สำเร็จ', 'error');
       return;
     }
+
+    // If stay fields were filled, create stay immediately
+    if (stayEnabled && stayBranch && stayCheckIn && stayNights) {
+      await fetch(`${API}/branches/stays`, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          guest_id:      data.id,
+          branch_id:     +stayBranch,
+          check_in_date: stayCheckIn,
+          nights:        +stayNights,
+          preferences:   document.getElementById('guestStayPrefs')?.value.trim() || null,
+        }),
+      });
+    }
+
     closeModal('guestModal');
     refreshGuests();
     loadDashboardStats();
     if (!id) {
-      showToast('✓ เพิ่มแขกใหม่แล้ว — กรุณายืนยันอีเมล', 'success');
+      const stayMsg = stayEnabled ? ' + บันทึกการเข้าพักแล้ว' : ' — กรุณายืนยันอีเมล';
+      showToast(`✓ เพิ่มแขกใหม่แล้ว${stayMsg}`, 'success');
       openOTPModal(data.id, data.email, false);
     } else {
       showToast(

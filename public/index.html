@@ -563,9 +563,67 @@
 
           <div style="grid-column:1/-1;">
             <label class="form-label">หมายเหตุ</label>
-            <textarea id="notes" class="form-input" style="height:76px;" placeholder="Allergies, VIP status, special preferences…"></textarea>
+            <textarea id="notes" class="form-input" style="height:70px;" placeholder="Allergies, VIP status, special preferences…"></textarea>
           </div>
         </div>
+
+        <!-- ── Stay Section ── -->
+        <div id="guestStaySection" style="margin-top:20px; border-top:2px dashed #e5e9f0; padding-top:18px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="font-size:.72rem; font-weight:800; text-transform:uppercase; letter-spacing:.7px; color:#6b7280;">🏨 การเข้าพัก</span>
+              <span id="stayOptionalBadge" style="background:#f1f4f9; color:#9ca3af; font-size:.65rem; font-weight:700; padding:2px 8px; border-radius:99px;">ไม่บังคับ</span>
+            </div>
+            <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:.8rem; color:#6b7280; font-weight:600;">
+              <input type="checkbox" id="enableStayFields" onchange="toggleStayFields()"
+                     style="width:16px; height:16px; accent-color:#2d56a0; cursor:pointer;" />
+              เพิ่มการเข้าพักทันที
+            </label>
+          </div>
+
+          <div id="stayFieldsWrap" style="display:none;">
+            <div style="background:#f8fafc; border:1px solid #e5e9f0; border-radius:12px; padding:16px 18px;">
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+
+                <div style="grid-column:1/-1;">
+                  <label class="form-label">สาขาที่เข้าพัก <span style="color:#ef4444;">*</span></label>
+                  <select id="guestStayBranch" class="form-input" onchange="updateGuestStayCheckout()">
+                    <option value="">— เลือกสาขา —</option>
+                  </select>
+                  <p class="field-error" id="err-guestStayBranch">กรุณาเลือกสาขา</p>
+                </div>
+
+                <div>
+                  <label class="form-label">วันที่ Check-in <span style="color:#ef4444;">*</span></label>
+                  <input id="guestStayCheckIn" type="date" class="form-input"
+                         oninput="updateGuestStayCheckout()" />
+                  <p class="field-error" id="err-guestStayCheckIn">กรุณาเลือกวันที่</p>
+                </div>
+
+                <div>
+                  <label class="form-label">จำนวนคืน <span style="color:#ef4444;">*</span></label>
+                  <input id="guestStayNights" type="number" min="1" max="365" class="form-input"
+                         placeholder="1" oninput="updateGuestStayCheckout()" />
+                  <p class="field-error" id="err-guestStayNights">กรุณาระบุจำนวนคืน</p>
+                </div>
+
+                <div id="guestStayCheckoutPreview" style="grid-column:1/-1; display:none;">
+                  <div style="display:flex; align-items:center; gap:8px; background:#dcfce7; color:#16a34a; padding:10px 14px; border-radius:10px; font-size:.875rem; font-weight:600;">
+                    📅 Check-out: <strong id="guestStayCheckoutDate">—</strong>
+                  </div>
+                </div>
+
+                <div style="grid-column:1/-1;">
+                  <label class="form-label">Preferences / ความต้องการพิเศษ</label>
+                  <textarea id="guestStayPrefs" class="form-input" style="height:56px;"
+                            placeholder="ห้องวิวทะเล, แพ้อาหารทะเล, เตียงเสริม…"></textarea>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px; padding-top:16px; border-top:1px solid #f1f4f9;">
           <button type="button" class="btn btn-secondary" onclick="closeModal('guestModal')">ยกเลิก</button>
           <button type="submit" class="btn btn-primary" id="guestSubmitBtn">
