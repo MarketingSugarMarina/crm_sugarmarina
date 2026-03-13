@@ -220,13 +220,120 @@
     ::-webkit-scrollbar { width:5px; height:5px; }
     ::-webkit-scrollbar-track { background:transparent; }
     ::-webkit-scrollbar-thumb { background:#d1d9e6; border-radius:99px; }
+
+    /* ══════════════════════ RESPONSIVE ══════════════════════ */
+
+    /* Tablet ≤ 1024px */
+    @media (max-width: 1024px) {
+      .page-section          { padding: 20px 22px; }
+      #statCardsGrid         { grid-template-columns: repeat(2,1fr) !important; gap: 14px !important; }
+      #dashboardGrid         { grid-template-columns: 1fr !important; }
+    }
+
+    /* Mobile ≤ 768px — sidebar → bottom nav */
+    @media (max-width: 768px) {
+      #desktopSidebar        { display: none !important; }
+      #mainContent           { margin-left: 0 !important; padding-bottom: 70px; }
+      #mainTopBar            { padding: 11px 16px !important; }
+      #todayDateBox          { display: none !important; }
+      .page-section          { padding: 14px 14px 20px !important; }
+
+      /* Stat cards 2×2 */
+      #statCardsGrid         { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+      .stat-card             { padding: 14px 14px !important; gap: 10px !important; }
+      .stat-icon             { width: 38px !important; height: 38px !important; font-size: 1rem !important; flex-shrink: 0; }
+      .stat-card > div > div:first-child { font-size: 1.4rem !important; }
+
+      /* Dashboard bottom card stack */
+      #dashboardGrid         { grid-template-columns: 1fr !important; gap: 14px !important; }
+
+      /* Filter bar wrap */
+      .filter-bar-row        { flex-direction: column !important; align-items: stretch !important; }
+      .filter-bar-row > *    { min-width: 0 !important; width: 100% !important; }
+
+      /* Buttons in filter bar: full width */
+      .filter-bar-btns       { display: flex !important; gap: 8px !important; }
+      .filter-bar-btns .btn  { flex: 1; justify-content: center; }
+      #exportCsvBtn          { width: 100%; justify-content: center; }
+
+      /* Table: tighter */
+      .tbl th, .tbl td       { padding: 9px 10px !important; font-size: .8rem !important; }
+
+      /* Modals: bottom sheet slide-up */
+      .modal-backdrop        { padding: 0 !important; align-items: flex-end !important; }
+      .modal-box             { border-radius: 22px 22px 0 0 !important; max-height: 94vh !important; max-width: 100% !important; width: 100% !important; animation: sheetUp .25s cubic-bezier(.32,1,.23,1); }
+      .modal-box.wide        { max-width: 100% !important; }
+      .modal-hdr             { border-radius: 22px 22px 0 0 !important; padding: 18px 20px 14px !important; }
+      .modal-hdr::before     { content:''; display:block; width:36px; height:4px; background:#e5e9f0; border-radius:99px; margin: 0 auto 12px; }
+
+      /* Form: 1 column */
+      .form-grid-2col        { grid-template-columns: 1fr !important; }
+
+      /* OTP inputs smaller */
+      .otp-input             { width: 42px !important; height: 50px !important; font-size: 1.25rem !important; }
+
+      /* Pagination compact */
+      #prevPage, #nextPage   { padding: 6px 10px !important; font-size: .75rem !important; }
+      #pageInfo              { min-width: 60px !important; }
+
+      /* Card header wrap */
+      .card-header           { flex-wrap: wrap; gap: 8px; padding: 14px 16px !important; }
+
+      /* Toast above bottom nav */
+      #toast                 { bottom: 78px !important; left: 12px !important; right: 12px !important; max-width: none !important; font-size: .82rem !important; }
+
+      /* Section padding tighter */
+      .card-header           { padding: 14px 16px !important; }
+    }
+
+    /* Small phones ≤ 480px */
+    @media (max-width: 480px) {
+      .page-section          { padding: 12px 10px 20px !important; }
+      #statCardsGrid         { gap: 8px !important; }
+      .stat-card             { padding: 12px 10px !important; gap: 8px !important; }
+      .stat-icon             { width: 34px !important; height: 34px !important; }
+      .otp-input             { width: 36px !important; height: 44px !important; font-size: 1.1rem !important; }
+      #otpBoxes              { gap: 5px !important; }
+    }
+
+    @keyframes sheetUp {
+      from { transform: translateY(100%); opacity: .6; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+
+    /* ── Mobile Bottom Nav ── */
+    .mobile-nav {
+      display: none;
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 45;
+      background: #0a1628; border-top: 1px solid rgba(255,255,255,.08);
+      height: 62px; align-items: stretch;
+      box-shadow: 0 -4px 24px rgba(10,22,40,.3);
+      padding-bottom: env(safe-area-inset-bottom, 0);
+    }
+    @media (max-width: 768px) { .mobile-nav { display: flex; } }
+
+    .mnav-item {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 3px;
+      color: #4a72b8; cursor: pointer; padding: 6px 4px;
+      font-size: .58rem; font-weight: 700; letter-spacing: .3px;
+      transition: color .15s; -webkit-tap-highlight-color: transparent;
+      position: relative;
+    }
+    .mnav-item .mn-icon { font-size: 1.2rem; line-height: 1; }
+    .mnav-item:active { background: rgba(255,255,255,.05); }
+    .mnav-item.active { color: #fff; }
+    .mnav-item.active::before {
+      content: ''; position: absolute; top: 0; left: 20%; right: 20%;
+      height: 2px; background: #4a72b8; border-radius: 0 0 99px 99px;
+    }
   </style>
 </head>
 <body>
 <div style="display:flex; min-height:100vh;">
 
 <!-- ════════════════════════════════════════════ SIDEBAR ══ -->
-<aside style="width:240px; background:#0a1628; min-height:100vh; display:flex; flex-direction:column; position:fixed; top:0; left:0; bottom:0; z-index:40;">
+<aside id="desktopSidebar" style="width:240px; background:#0a1628; min-height:100vh; display:flex; flex-direction:column; position:fixed; top:0; left:0; bottom:0; z-index:40;">
 
   <!-- Brand -->
   <div style="padding:24px 20px 20px; border-bottom:1px solid rgba(255,255,255,.07);">
@@ -270,16 +377,16 @@
 </aside>
 
 <!-- ════════════════════════════════════════════ MAIN ══ -->
-<div style="margin-left:240px; flex:1; display:flex; flex-direction:column; min-height:100vh;">
+<div id="mainContent" style="margin-left:240px; flex:1; display:flex; flex-direction:column; min-height:100vh;">
 
   <!-- Top Bar -->
-  <header style="background:#fff; border-bottom:1px solid #f1f4f9; padding:14px 32px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:30; box-shadow:0 1px 0 #f1f4f9;">
+  <header id="mainTopBar" style="background:#fff; border-bottom:1px solid #f1f4f9; padding:14px 32px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:30; box-shadow:0 1px 0 #f1f4f9;">
     <div>
       <div style="font-size:1.05rem; font-weight:800; color:#0f172a;" id="pageTitle">Dashboard</div>
       <div style="font-size:.75rem; color:#9ca3af; margin-top:1px;" id="pageSubtitle">ภาพรวมระบบ CRM</div>
     </div>
     <div style="display:flex; align-items:center; gap:12px;">
-      <div style="background:#f1f4f9; border-radius:10px; padding:8px 14px; display:flex; align-items:center; gap:8px; font-size:.8rem; color:#6b7280;">
+      <div id="todayDateBox" style="background:#f1f4f9; border-radius:10px; padding:8px 14px; display:flex; align-items:center; gap:8px; font-size:.8rem; color:#6b7280;">
         <span>📅</span>
         <span id="todayDate"></span>
       </div>
@@ -291,7 +398,7 @@
   <main id="page-dashboard" class="page-section">
 
     <!-- Stat Cards -->
-    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-bottom:24px;">
+    <div id="statCardsGrid" style="display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-bottom:24px;">
 
       <div class="stat-card" style="border-top:3px solid #2d56a0;">
         <div class="stat-icon" style="background:#eef2f9;">👥</div>
@@ -330,7 +437,7 @@
     </div>
 
     <!-- Grid: Branches + Recent Guests -->
-    <div style="display:grid; grid-template-columns:2fr 3fr; gap:18px;">
+    <div id="dashboardGrid" style="display:grid; grid-template-columns:2fr 3fr; gap:18px;">
 
       <!-- Top Branches -->
       <div class="card">
@@ -373,7 +480,7 @@
     <!-- Filter Bar -->
     <div class="card" style="margin-bottom:18px; overflow:visible;">
       <div style="padding:16px 20px;">
-        <div style="display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap;">
+        <div class="filter-bar-row" style="display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap;">
 
           <!-- Search -->
           <div style="flex:1; min-width:220px;">
@@ -405,12 +512,14 @@
             </select>
           </div>
 
-          <button class="btn btn-primary" onclick="openAddGuestModal()" style="padding:9px 20px;">
-            ＋ เพิ่มแขกใหม่
-          </button>
-          <button id="exportCsvBtn" onclick="exportGuestsCSV()" style="padding:9px 18px; border-radius:10px; background:#fff; border:1px solid #d1d9e6; color:#374151; font-size:.84rem; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; transition:background .15s;">
-            📥 Export CSV
-          </button>
+          <div class="filter-bar-btns" style="display:flex; gap:8px; align-items:center;">
+            <button class="btn btn-primary" onclick="openAddGuestModal()" style="padding:9px 20px;">
+              ＋ เพิ่มแขกใหม่
+            </button>
+            <button id="exportCsvBtn" onclick="exportGuestsCSV()" style="padding:9px 16px; border-radius:10px; background:#fff; border:1px solid #d1d9e6; color:#374151; font-size:.84rem; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; transition:background .15s; white-space:nowrap;">
+              📥 Export CSV
+            </button>
+          </div>
         </div>
 
         <!-- Active Filter Tags -->
@@ -507,7 +616,7 @@
     <div style="padding:20px 24px 24px;">
       <form id="guestForm" onsubmit="saveGuest(event)" novalidate>
         <input type="hidden" id="guestId" />
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+        <div class="form-grid-2col" style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
 
           <div>
             <label class="form-label">ชื่อ <span style="color:#ef4444;">*</span></label>
@@ -583,7 +692,7 @@
 
           <div id="stayFieldsWrap" style="display:none;">
             <div style="background:#f8fafc; border:1px solid #e5e9f0; border-radius:12px; padding:16px 18px;">
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <div class="form-grid-2col" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
 
                 <div style="grid-column:1/-1;">
                   <label class="form-label">สาขาที่เข้าพัก <span style="color:#ef4444;">*</span></label>
@@ -714,7 +823,7 @@
         <div style="font-size:.72rem; font-weight:800; text-transform:uppercase; letter-spacing:.7px; color:#9ca3af; margin-bottom:14px;">＋ เพิ่มการเข้าพักใหม่</div>
         <form id="stayForm" onsubmit="saveStay(event)" novalidate>
           <input type="hidden" id="stayGuestId" />
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <div class="form-grid-2col" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
             <div style="grid-column:1/-1;">
               <label class="form-label">สาขา <span style="color:#ef4444;">*</span></label>
               <select id="stayBranchId" class="form-input" required onchange="updateCheckoutPreview()">
@@ -767,7 +876,7 @@
     </div>
     <div style="padding:20px 24px 24px;">
       <form id="addStayForm" onsubmit="saveStandaloneStay(event)" novalidate>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <div class="form-grid-2col" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
           <div style="grid-column:1/-1;">
             <label class="form-label">แขก <span style="color:#ef4444;">*</span></label>
             <select id="addStayGuestId" class="form-input" required><option value="">— เลือกแขก —</option></select>
@@ -819,6 +928,26 @@
     weekday:'short', year:'numeric', month:'short', day:'numeric'
   });
 </script>
+<!-- ══════════════════════════════ MOBILE BOTTOM NAV ══ -->
+<nav class="mobile-nav" id="mobileNav">
+  <div class="mnav-item active" id="mnav-dashboard" onclick="showPage('dashboard')">
+    <span class="mn-icon">📊</span>
+    <span>Dashboard</span>
+  </div>
+  <div class="mnav-item" id="mnav-guests" onclick="showPage('guests')">
+    <span class="mn-icon">👥</span>
+    <span>Guests</span>
+  </div>
+  <div class="mnav-item" id="mnav-stays" onclick="showPage('stays')">
+    <span class="mn-icon">🏨</span>
+    <span>พัก</span>
+  </div>
+  <div class="mnav-item" id="mnav-branches" onclick="showPage('branches')">
+    <span class="mn-icon">🏢</span>
+    <span>สาขา</span>
+  </div>
+</nav>
+
 <script src="app.js"></script>
 </body>
 </html>

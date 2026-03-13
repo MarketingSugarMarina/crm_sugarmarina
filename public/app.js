@@ -114,10 +114,13 @@ function showPage(name) {
   PAGES.forEach(p => {
     document.getElementById(`page-${p}`).style.display = (p === name) ? 'block' : 'none';
     document.getElementById(`nav-${p}`)?.classList.toggle('active', p === name);
+    document.getElementById(`mnav-${p}`)?.classList.toggle('active', p === name);
   });
   const [title, sub] = PAGE_META[name] || ['—', ''];
   document.getElementById('pageTitle').textContent    = title;
   document.getElementById('pageSubtitle').textContent = sub;
+  // Scroll to top on page change (mobile)
+  window.scrollTo({ top: 0, behavior: 'smooth' });
   if (name === 'dashboard') loadDashboard();
   if (name === 'guests')    loadGuests();
   if (name === 'stays')     loadAllStays();
