@@ -4,726 +4,459 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sugar Marina — Guest CRM</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ocean: {
+              50:  '#f0f8fb',
+              100: '#d9eef5',
+              200: '#b3ddeb',
+              300: '#7ec4d8',
+              400: '#44a3bf',
+              500: '#2888a6',
+              600: '#1A6B8A',
+              700: '#175d78',
+              800: '#174e64',
+              900: '#174254',
+            }
+          }
+        }
+      }
+    }
+  </script>
   <style>
-    /* ── Reset & Base ───────────────────────────────────────────────────────── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --navy-900: #0D1B2A;
-      --navy-800: #162236;
-      --navy-700: #1E3050;
-      --navy-600: #26406A;
-      --navy-400: #3D6090;
-      --navy-200: #8BA5C8;
-      --navy-100: #D6E3F3;
-      --navy-50:  #EEF4FB;
-
-      --gold:     #C9A227;
-      --gold-lt:  #F5E6B8;
-
-      --green:    #2ECC71;
-      --green-lt: #D5F5E3;
-      --red:      #E74C3C;
-      --red-lt:   #FDECEA;
-      --amber:    #F39C12;
-      --amber-lt: #FEF3CD;
-
-      --bg:       #F0F4F9;
-      --surface:  #FFFFFF;
-      --border:   #DDE6F0;
-      --text:     #1A2B3C;
-      --muted:    #6B829E;
-
-      --sidebar-w: 240px;
-      --radius:   10px;
-      --shadow:   0 2px 12px rgba(13,27,42,.10);
-      --shadow-lg:0 8px 32px rgba(13,27,42,.16);
-    }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-    }
-
-    /* ── Sidebar ────────────────────────────────────────────────────────────── */
-    .sidebar {
-      width: var(--sidebar-w);
-      background: var(--navy-900);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      position: fixed;
-      top: 0; left: 0; bottom: 0;
-      z-index: 50;
-    }
-
-    .sidebar-brand {
-      padding: 24px 20px 20px;
-      border-bottom: 1px solid var(--navy-700);
-    }
-    .sidebar-brand .hotel-name {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: #fff;
-      letter-spacing: 0.3px;
-      line-height: 1.3;
-    }
-    .sidebar-brand .hotel-sub {
-      font-size: 0.7rem;
-      color: var(--navy-200);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-top: 4px;
-    }
-
-    .sidebar-section {
-      padding: 20px 12px 8px;
-      font-size: 0.68rem;
-      font-weight: 600;
-      color: var(--navy-400);
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-    }
-
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 16px;
-      margin: 2px 8px;
-      border-radius: 8px;
-      color: var(--navy-200);
-      font-size: 0.875rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background .15s, color .15s;
-      text-decoration: none;
-    }
-    .nav-item:hover        { background: var(--navy-800); color: #fff; }
-    .nav-item.active       { background: var(--navy-600); color: #fff; }
-    .nav-item .nav-icon    { font-size: 1rem; width: 20px; text-align: center; }
-
-    .sidebar-footer {
-      margin-top: auto;
-      padding: 16px 20px;
-      border-top: 1px solid var(--navy-700);
-      font-size: 0.72rem;
-      color: var(--navy-400);
-      line-height: 1.6;
-    }
-
-    /* ── Main Content ───────────────────────────────────────────────────────── */
-    .main {
-      margin-left: var(--sidebar-w);
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-
-    /* ── Top Bar ────────────────────────────────────────────────────────────── */
-    .topbar {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 14px 32px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 40;
-    }
-    .topbar-title {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--navy-900);
-    }
-    .topbar-sub {
-      font-size: 0.8rem;
-      color: var(--muted);
-      margin-top: 1px;
-    }
-    .topbar-right {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .avatar {
-      width: 36px; height: 36px;
-      border-radius: 50%;
-      background: var(--navy-700);
-      color: #fff;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.8rem;
-      font-weight: 700;
-    }
-
-    /* ── Page Body ──────────────────────────────────────────────────────────── */
-    .page { padding: 28px 32px; }
-
-    /* ── Stats Cards ────────────────────────────────────────────────────────── */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      margin-bottom: 28px;
-    }
-    .stat-card {
-      background: var(--surface);
-      border-radius: var(--radius);
-      padding: 20px 22px;
-      box-shadow: var(--shadow);
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      border-left: 4px solid transparent;
-    }
-    .stat-card.c-navy   { border-color: var(--navy-600); }
-    .stat-card.c-green  { border-color: var(--green); }
-    .stat-card.c-gold   { border-color: var(--gold); }
-    .stat-card.c-red    { border-color: var(--red); }
-
-    .stat-icon {
-      width: 44px; height: 44px;
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.2rem;
-      flex-shrink: 0;
-    }
-    .c-navy  .stat-icon { background: var(--navy-50);  }
-    .c-green .stat-icon { background: var(--green-lt); }
-    .c-gold  .stat-icon { background: var(--gold-lt);  }
-    .c-red   .stat-icon { background: var(--red-lt);   }
-
-    .stat-info .stat-val {
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: var(--navy-900);
-      line-height: 1;
-    }
-    .stat-info .stat-lbl {
-      font-size: 0.75rem;
-      color: var(--muted);
-      margin-top: 4px;
-      font-weight: 500;
-    }
-
-    /* ── Toolbar ────────────────────────────────────────────────────────────── */
-    .toolbar {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 16px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .search-wrap {
-      position: relative;
-      flex: 1;
-      min-width: 220px;
-    }
-    .search-wrap .search-icon {
-      position: absolute;
-      left: 12px; top: 50%;
-      transform: translateY(-50%);
-      color: var(--muted);
-      font-size: 0.9rem;
-      pointer-events: none;
-    }
-    .search-wrap input {
-      width: 100%;
-      padding: 10px 14px 10px 36px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 0.9rem;
-      font-family: inherit;
-      background: var(--surface);
-      color: var(--text);
-      transition: border-color .2s, box-shadow .2s;
-    }
-    .search-wrap input:focus {
-      outline: none;
-      border-color: var(--navy-600);
-      box-shadow: 0 0 0 3px rgba(38,64,106,.12);
-    }
-
-    /* ── Buttons ────────────────────────────────────────────────────────────── */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 9px 18px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.875rem;
-      font-weight: 600;
-      font-family: inherit;
-      transition: filter .15s, transform .1s;
-      white-space: nowrap;
-    }
-    .btn:hover  { filter: brightness(1.08); }
-    .btn:active { transform: scale(.97); }
-
-    .btn-navy    { background: var(--navy-700); color: #fff; }
-    .btn-green   { background: #27AE60; color: #fff; }
-    .btn-red     { background: #E74C3C; color: #fff; }
-    .btn-amber   { background: var(--amber); color: #fff; }
-    .btn-outline {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text);
-    }
-    .btn-sm { padding: 6px 12px; font-size: 0.8rem; border-radius: 6px; }
-
-    /* ── Table Card ─────────────────────────────────────────────────────────── */
-    .card {
-      background: var(--surface);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-
-    .card-header {
-      padding: 16px 20px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .card-header h3 {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--navy-900);
-    }
-    .card-header span {
-      font-size: 0.78rem;
-      color: var(--muted);
-      background: var(--navy-50);
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-weight: 600;
-    }
-
-    table { width: 100%; border-collapse: collapse; }
-    thead th {
-      background: var(--navy-50);
-      color: var(--navy-600);
-      padding: 11px 16px;
-      text-align: left;
-      font-size: 0.72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      border-bottom: 1px solid var(--border);
-    }
-    tbody td {
-      padding: 13px 16px;
-      font-size: 0.875rem;
-      border-bottom: 1px solid var(--border);
-      color: var(--text);
-      vertical-align: middle;
-    }
-    tbody tr:last-child td { border-bottom: none; }
-    tbody tr:hover td { background: var(--navy-50); }
-
-    .guest-name strong { font-weight: 600; color: var(--navy-900); }
-    .guest-name small  { display: block; font-size: 0.75rem; color: var(--muted); margin-top: 1px; }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-size: 0.72rem;
-      font-weight: 700;
-    }
-    .badge::before { content: '●'; font-size: 0.5rem; }
-    .badge-verified   { background: var(--green-lt); color: #1E8449; }
-    .badge-unverified { background: var(--red-lt);   color: #C0392B; }
-
-    .action-group { display: flex; gap: 6px; }
-
-    /* ── Modal ──────────────────────────────────────────────────────────────── */
-    .modal-overlay {
-      display: none;
-      position: fixed; inset: 0;
-      background: rgba(13,27,42,.55);
-      backdrop-filter: blur(3px);
-      z-index: 200;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-    .modal-overlay.active { display: flex; }
-
-    .modal {
-      background: var(--surface);
-      border-radius: 14px;
-      width: 100%;
-      max-width: 540px;
-      max-height: 92vh;
-      overflow-y: auto;
-      box-shadow: var(--shadow-lg);
-      animation: slideUp .2s ease;
-    }
-    @keyframes slideUp {
-      from { opacity:0; transform: translateY(20px); }
-      to   { opacity:1; transform: translateY(0); }
-    }
-
-    .modal-header {
-      padding: 22px 28px 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .modal-header h2 {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--navy-900);
-    }
-    .modal-close {
-      background: var(--navy-50);
-      border: none;
-      width: 30px; height: 30px;
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 1rem;
-      color: var(--muted);
-      display: flex; align-items: center; justify-content: center;
-      transition: background .15s;
-    }
-    .modal-close:hover { background: var(--border); }
-
-    .modal-body { padding: 20px 28px 28px; }
-
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .form-grid .full { grid-column: 1 / -1; }
-
-    .field label {
-      display: block;
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: var(--muted);
-      margin-bottom: 5px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .field input,
-    .field textarea,
-    .field select {
-      width: 100%;
-      padding: 9px 13px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 0.9rem;
-      font-family: inherit;
-      color: var(--text);
-      background: var(--surface);
-      transition: border-color .2s, box-shadow .2s;
-    }
-    .field input:focus,
-    .field textarea:focus {
-      outline: none;
-      border-color: var(--navy-600);
-      box-shadow: 0 0 0 3px rgba(38,64,106,.12);
-    }
-    .field textarea { resize: vertical; min-height: 72px; }
-
-    /* OTP section */
-    .otp-section {
-      border-top: 1px solid var(--border);
-      padding-top: 16px;
-      margin-top: 4px;
-    }
-    .otp-label {
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 8px;
-    }
-    .otp-row {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-    .otp-row input {
-      width: 130px;
-      letter-spacing: 6px;
-      font-size: 1.1rem;
-      font-weight: 700;
-      text-align: center;
-      padding: 9px 13px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-family: 'Courier New', monospace;
-      color: var(--navy-900);
-    }
-
-    .modal-footer {
-      padding: 0 28px 24px;
-      display: flex;
-      gap: 10px;
-      justify-content: flex-end;
-    }
-
-    /* ── Divider ────────────────────────────────────────────────────────────── */
-    .section-divider {
-      border: none;
-      border-top: 1px solid var(--border);
-      margin: 18px 0 4px;
-    }
-
-    /* ── Toast ──────────────────────────────────────────────────────────────── */
-    #toast {
-      position: fixed;
-      bottom: 28px; right: 28px;
-      background: var(--navy-800);
-      color: #fff;
-      padding: 13px 20px;
-      border-radius: 10px;
-      font-size: 0.875rem;
-      font-weight: 500;
-      opacity: 0;
-      transform: translateY(8px);
-      transition: opacity .25s, transform .25s;
-      z-index: 999;
-      max-width: 320px;
-      box-shadow: var(--shadow-lg);
-      border-left: 4px solid var(--gold);
-    }
-    #toast.show { opacity: 1; transform: translateY(0); }
-
-    /* ── Empty State ─────────────────────────────────────────────────────────── */
-    .empty-state {
-      text-align: center;
-      padding: 56px 20px;
-      color: var(--muted);
-    }
-    .empty-state .empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
-    .empty-state p { font-size: 0.9rem; }
-
-    /* ── Scrollbar ──────────────────────────────────────────────────────────── */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--navy-100); border-radius: 3px; }
+    [x-cloak] { display: none; }
+    .sidebar-link { @apply flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-300 text-sm font-medium transition-colors hover:bg-slate-700 hover:text-white; }
+    .sidebar-link.active { @apply bg-ocean-600 text-white; }
+    .stat-card { @apply bg-white rounded-xl p-5 shadow-sm border border-slate-100 flex items-center gap-4; }
+    .badge-verified   { @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700; }
+    .badge-unverified { @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700; }
+    .progress-bar { @apply h-2 rounded-full bg-ocean-500 transition-all duration-500; }
+    .btn-primary { @apply inline-flex items-center gap-2 bg-ocean-600 hover:bg-ocean-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors; }
+    .btn-secondary { @apply inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold transition-colors; }
+    .btn-danger { @apply inline-flex items-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors; }
+    .btn-icon { @apply inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors; }
+    .form-input { @apply w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ocean-400 focus:border-transparent; }
+    .form-label { @apply block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wide; }
+    .spinner { @apply animate-spin rounded-full h-6 w-6 border-2 border-ocean-200 border-t-ocean-600; }
+    tbody tr { @apply hover:bg-slate-50 transition-colors; }
+    th { @apply text-left text-xs font-semibold text-slate-500 uppercase tracking-wide px-4 py-3 bg-slate-50 border-b border-slate-100; }
+    td { @apply px-4 py-3 text-sm border-b border-slate-50; }
+    .modal-backdrop { @apply fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4; }
+    .modal-box { @apply bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto; }
+    #toast { @apply fixed bottom-6 right-6 z-[999] px-5 py-3 rounded-xl text-sm font-semibold shadow-xl transition-all duration-300 translate-y-2 opacity-0 pointer-events-none border-l-4; }
+    #toast.show { @apply translate-y-0 opacity-100; }
+    #toast.success { @apply bg-white text-slate-800 border-emerald-500; }
+    #toast.error   { @apply bg-white text-slate-800 border-red-500; }
+    #toast.info    { @apply bg-white text-slate-800 border-ocean-500; }
   </style>
 </head>
-<body>
+<body class="bg-slate-100 font-sans">
 
-<!-- ── Sidebar ───────────────────────────────────────────────────────────── -->
-<aside class="sidebar">
-  <div class="sidebar-brand">
-    <div style="font-size:1.5rem;margin-bottom:8px;">⚓</div>
-    <div class="hotel-name">Sugar Marina<br/>Hotel Collection</div>
-    <div class="hotel-sub">CRM System</div>
-  </div>
+<!-- ═══════════════════════════════════════════════════════ LAYOUT ══ -->
+<div class="flex min-h-screen">
 
-  <div class="sidebar-section">Main Menu</div>
-  <a class="nav-item active" href="#">
-    <span class="nav-icon">👥</span> Guest List
-  </a>
-  <a class="nav-item" href="#">
-    <span class="nav-icon">🏨</span> Branches
-  </a>
-  <a class="nav-item" href="#">
-    <span class="nav-icon">📅</span> Stays
-  </a>
-  <a class="nav-item" href="#">
-    <span class="nav-icon">📊</span> Reports
-  </a>
-
-  <div class="sidebar-section">Settings</div>
-  <a class="nav-item" href="#">
-    <span class="nav-icon">⚙️</span> Configuration
-  </a>
-
-  <div class="sidebar-footer">
-    Sugar Marina Hotel<br/>
-    Kata Beach, Phuket
-  </div>
-</aside>
-
-<!-- ── Main ──────────────────────────────────────────────────────────────── -->
-<div class="main">
-
-  <!-- Top Bar -->
-  <div class="topbar">
-    <div>
-      <div class="topbar-title">Guest Management</div>
-      <div class="topbar-sub">Front Desk Dashboard</div>
+  <!-- ── Sidebar ──────────────────────────────────────────────────── -->
+  <aside class="w-60 bg-slate-800 min-h-screen flex flex-col fixed top-0 left-0 bottom-0 z-40">
+    <!-- Brand -->
+    <div class="px-5 py-5 border-b border-slate-700">
+      <div class="text-2xl mb-1">🌊</div>
+      <div class="text-white font-bold text-sm leading-tight">Sugar Marina</div>
+      <div class="text-ocean-300 text-xs font-semibold tracking-widest uppercase mt-0.5">Hotel Collection</div>
     </div>
-    <div class="topbar-right">
-      <div style="text-align:right;margin-right:4px;">
-        <div style="font-size:0.82rem;font-weight:600;color:var(--navy-900);">Reception</div>
-        <div style="font-size:0.72rem;color:var(--muted);">Front Desk</div>
+
+    <!-- Navigation -->
+    <nav class="px-3 py-4 flex-1">
+      <p class="text-slate-500 text-[10px] font-bold uppercase tracking-widest px-2 mb-2">Main Menu</p>
+      <a class="sidebar-link active" id="nav-dashboard" onclick="showPage('dashboard')">
+        <span>📊</span> Dashboard
+      </a>
+      <a class="sidebar-link" id="nav-guests" onclick="showPage('guests')">
+        <span>👥</span> แขก (Guests)
+      </a>
+      <a class="sidebar-link" id="nav-stays" onclick="showPage('stays')">
+        <span>🏨</span> ประวัติการพัก
+      </a>
+
+      <p class="text-slate-500 text-[10px] font-bold uppercase tracking-widest px-2 mb-2 mt-6">ข้อมูล</p>
+      <a class="sidebar-link" id="nav-branches" onclick="showPage('branches')">
+        <span>🏢</span> สาขา
+      </a>
+    </nav>
+
+    <div class="px-5 py-4 border-t border-slate-700 text-xs text-slate-500 leading-relaxed">
+      Sugar Marina Hotel<br/>Kata Beach, Phuket
+    </div>
+  </aside>
+
+  <!-- ── Main ─────────────────────────────────────────────────────── -->
+  <div class="ml-60 flex-1 flex flex-col">
+
+    <!-- Top Bar -->
+    <header class="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between sticky top-0 z-30">
+      <div>
+        <h1 class="font-bold text-slate-800" id="pageTitle">Dashboard</h1>
+        <p class="text-xs text-slate-400 mt-0.5" id="pageSubtitle">ภาพรวมระบบ CRM</p>
       </div>
-      <div class="avatar">FD</div>
-    </div>
-  </div>
+      <div class="flex items-center gap-3">
+        <div class="text-right">
+          <div class="text-sm font-semibold text-slate-700">Front Desk</div>
+          <div class="text-xs text-slate-400">Reception</div>
+        </div>
+        <div class="w-9 h-9 bg-ocean-600 rounded-full flex items-center justify-center text-white text-xs font-bold">FD</div>
+      </div>
+    </header>
 
-  <!-- Page -->
-  <div class="page">
+    <!-- ════════════════════════════════════════ PAGE: DASHBOARD ══ -->
+    <main id="page-dashboard" class="p-8">
 
-    <!-- Stats Cards -->
-    <div class="stats-grid">
-      <div class="stat-card c-navy">
-        <div class="stat-icon">👥</div>
-        <div class="stat-info">
-          <div class="stat-val" id="statTotal">—</div>
-          <div class="stat-lbl">Total Guests</div>
+      <!-- Stat Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+        <div class="stat-card">
+          <div class="w-11 h-11 rounded-xl bg-ocean-50 flex items-center justify-center text-xl">👥</div>
+          <div>
+            <div class="text-2xl font-bold text-slate-800" id="d-total">—</div>
+            <div class="text-xs text-slate-500 font-medium mt-0.5">แขกทั้งหมด</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="w-11 h-11 rounded-xl bg-emerald-50 flex items-center justify-center text-xl">✅</div>
+          <div>
+            <div class="text-2xl font-bold text-slate-800" id="d-verified">—</div>
+            <div class="text-xs text-slate-500 font-medium mt-0.5">ยืนยันอีเมลแล้ว</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="w-11 h-11 rounded-xl bg-amber-50 flex items-center justify-center text-xl">⏳</div>
+          <div class="flex items-start gap-2">
+            <div>
+              <div class="text-2xl font-bold text-slate-800" id="d-unverified">—</div>
+              <div class="text-xs text-slate-500 font-medium mt-0.5">รอยืนยันอีเมล</div>
+            </div>
+            <span id="d-unverified-badge" class="hidden mt-1 px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-bold rounded-full">!</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="w-11 h-11 rounded-xl bg-purple-50 flex items-center justify-center text-xl">📅</div>
+          <div>
+            <div class="text-2xl font-bold text-slate-800" id="d-stays">—</div>
+            <div class="text-xs text-slate-500 font-medium mt-0.5">การเข้าพักทั้งหมด</div>
+          </div>
         </div>
       </div>
-      <div class="stat-card c-green">
-        <div class="stat-icon">✅</div>
-        <div class="stat-info">
-          <div class="stat-val" id="statVerified">—</div>
-          <div class="stat-lbl">Verified Email</div>
+
+      <!-- Bottom Grid: Top Branches + Recent Guests -->
+      <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+
+        <!-- Top Branches -->
+        <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-100 p-6">
+          <h2 class="font-bold text-slate-700 mb-4 flex items-center gap-2">
+            🏆 <span>สาขายอดนิยม</span>
+          </h2>
+          <div id="branchStats" class="space-y-3">
+            <div class="flex justify-center py-4"><div class="spinner"></div></div>
+          </div>
+        </div>
+
+        <!-- Recent Guests -->
+        <div class="lg:col-span-3 bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+          <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+            <h2 class="font-bold text-slate-700 flex items-center gap-2">🕐 <span>แขกล่าสุด</span></h2>
+            <button class="text-xs text-ocean-600 font-semibold hover:underline" onclick="showPage('guests')">ดูทั้งหมด →</button>
+          </div>
+          <table class="w-full">
+            <thead>
+              <tr>
+                <th>ชื่อ</th>
+                <th>สัญชาติ</th>
+                <th>สถานะ</th>
+                <th>วันที่สร้าง</th>
+              </tr>
+            </thead>
+            <tbody id="recentGuests">
+              <tr><td colspan="4" class="text-center py-8 text-slate-400">
+                <div class="flex justify-center"><div class="spinner"></div></div>
+              </td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- ════════════════════════════════════════ PAGE: GUESTS ══════ -->
+    <main id="page-guests" class="p-8 hidden">
+
+      <!-- Filter Bar -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-4 mb-5">
+        <div class="flex flex-wrap gap-3 items-end">
+
+          <!-- Search -->
+          <div class="flex-1 min-w-48">
+            <label class="form-label">ค้นหา</label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">🔍</span>
+              <input id="filterSearch" type="text" class="form-input pl-8"
+                     placeholder="ชื่อ, อีเมล, เบอร์, สัญชาติ…"
+                     oninput="debounceGuestSearch()" />
+            </div>
+          </div>
+
+          <!-- Verified filter -->
+          <div class="min-w-40">
+            <label class="form-label">สถานะอีเมล</label>
+            <select id="filterVerified" class="form-input" onchange="loadGuests()">
+              <option value="">ทั้งหมด</option>
+              <option value="true">✅ ยืนยันแล้ว</option>
+              <option value="false">⏳ รอยืนยัน</option>
+            </select>
+          </div>
+
+          <!-- Branch filter -->
+          <div class="min-w-52">
+            <label class="form-label">สาขา</label>
+            <select id="filterBranch" class="form-input" onchange="loadGuests()">
+              <option value="">ทุกสาขา</option>
+            </select>
+          </div>
+
+          <button class="btn-primary" onclick="openAddModal()">＋ เพิ่มแขกใหม่</button>
         </div>
       </div>
-      <div class="stat-card c-gold">
-        <div class="stat-icon">🌏</div>
-        <div class="stat-info">
-          <div class="stat-val" id="statNat">—</div>
-          <div class="stat-lbl">Nationalities</div>
+
+      <!-- Table Card -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+        <!-- Table Header -->
+        <div class="px-5 py-3 border-b border-slate-100 flex items-center justify-between">
+          <p class="text-sm text-slate-600" id="guestCountLabel">กำลังโหลด…</p>
+          <!-- Pagination controls -->
+          <div class="flex items-center gap-2 text-sm">
+            <button id="prevPage" onclick="changePage(-1)"
+                    class="px-3 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold disabled:opacity-40"
+                    disabled>← ก่อน</button>
+            <span id="pageInfo" class="text-slate-500 text-xs min-w-20 text-center">หน้า 1 / 1</span>
+            <button id="nextPage" onclick="changePage(1)"
+                    class="px-3 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold disabled:opacity-40"
+                    disabled>ถัดไป →</button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full whitespace-nowrap">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>ชื่อ-นามสกุล</th>
+                <th>อีเมล</th>
+                <th>เบอร์โทร</th>
+                <th>สัญชาติ</th>
+                <th>วันเกิด</th>
+                <th>สถานะอีเมล</th>
+                <th>Stay</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="guestBody">
+              <tr><td colspan="9" class="text-center py-12 text-slate-400">
+                <div class="flex justify-center mb-2"><div class="spinner"></div></div>
+                กำลังโหลดข้อมูล…
+              </td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
-      <div class="stat-card c-red">
-        <div class="stat-icon">⏳</div>
-        <div class="stat-info">
-          <div class="stat-val" id="statUnverified">—</div>
-          <div class="stat-lbl">Pending Verify</div>
+    </main>
+
+    <!-- ════════════════════════════════════════ PAGE: STAYS ═══════ -->
+    <main id="page-stays" class="p-8 hidden">
+      <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+          <h2 class="font-bold text-slate-700">ประวัติการเข้าพักทั้งหมด</h2>
+          <button class="btn-primary" onclick="openAddStayModal()">＋ เพิ่ม Stay</button>
         </div>
+        <table class="w-full whitespace-nowrap">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>แขก</th>
+              <th>สาขา</th>
+              <th>Check-in</th>
+              <th>Check-out</th>
+              <th>คืน</th>
+              <th>Preferences</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="staysBody">
+            <tr><td colspan="8" class="text-center py-12">
+              <div class="flex justify-center mb-2"><div class="spinner"></div></div>
+            </td></tr>
+          </tbody>
+        </table>
       </div>
-    </div>
+    </main>
 
-    <!-- Toolbar -->
-    <div class="toolbar">
-      <div class="search-wrap">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="searchInput"
-               placeholder="ค้นหาตามชื่อ, อีเมล, โทรศัพท์…"
-               oninput="debounceSearch()" />
+    <!-- ════════════════════════════════════════ PAGE: BRANCHES ════ -->
+    <main id="page-branches" class="p-8 hidden">
+      <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-100">
+          <h2 class="font-bold text-slate-700">11 สาขา Sugar Marina Hotel Collection</h2>
+        </div>
+        <table class="w-full">
+          <thead>
+            <tr>
+              <th>#</th><th>ชื่อสาขา</th><th>Slug</th>
+              <th>จำนวน Stay</th><th>จำนวนแขก</th><th>สัดส่วน</th>
+            </tr>
+          </thead>
+          <tbody id="branchesBody">
+            <tr><td colspan="6" class="text-center py-12">
+              <div class="flex justify-center"><div class="spinner"></div></div>
+            </td></tr>
+          </tbody>
+        </table>
       </div>
-      <button class="btn btn-outline" onclick="loadGuests()">Search</button>
-      <button class="btn btn-navy" onclick="openAddModal()">＋ Add Guest</button>
+    </main>
+
+  </div><!-- /main -->
+</div><!-- /flex -->
+
+<!-- ═══════════════════════════════════ MODAL: ADD/EDIT GUEST ══════ -->
+<div id="guestModal" class="modal-backdrop hidden">
+  <div class="modal-box">
+    <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100">
+      <h3 class="font-bold text-slate-800" id="modalTitle">เพิ่มแขกใหม่</h3>
+      <button onclick="closeModal('guestModal')"
+              class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold">✕</button>
     </div>
-
-    <!-- Guest Table -->
-    <div class="card">
-      <div class="card-header">
-        <h3>Guest Directory</h3>
-        <span id="guestCount">0 guests</span>
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Guest</th>
-            <th>Phone</th>
-            <th>Nationality</th>
-            <th>Birthday</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="guestBody">
-          <tr>
-            <td colspan="7">
-              <div class="empty-state">
-                <div class="empty-icon">⏳</div>
-                <p>Loading guests…</p>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-  </div><!-- /page -->
-</div><!-- /main -->
-
-<!-- ── Modal: Add / Edit Guest ──────────────────────────────────────────── -->
-<div class="modal-overlay" id="guestModal">
-  <div class="modal">
-    <div class="modal-header">
-      <h2 id="modalTitle">Add New Guest</h2>
-      <button class="modal-close" onclick="closeModal()">✕</button>
-    </div>
-
-    <div class="modal-body">
+    <div class="px-6 py-5">
       <form id="guestForm" onsubmit="saveGuest(event)">
         <input type="hidden" id="guestId" />
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="form-label">ชื่อ *</label>
+            <input id="firstName" class="form-input" required placeholder="Somchai" />
+          </div>
+          <div>
+            <label class="form-label">นามสกุล *</label>
+            <input id="lastName" class="form-input" required placeholder="Jaidee" />
+          </div>
+          <div class="col-span-2">
+            <label class="form-label">อีเมล *</label>
+            <input id="guestEmail" type="email" class="form-input" required placeholder="guest@example.com" />
+          </div>
+          <div>
+            <label class="form-label">เบอร์โทร</label>
+            <input id="phone" class="form-input" placeholder="+66 81 234 5678" />
+          </div>
+          <div>
+            <label class="form-label">สัญชาติ</label>
+            <input id="nationality" class="form-input" placeholder="Thai" />
+          </div>
+          <div>
+            <label class="form-label">วันเกิด</label>
+            <input id="birthday" type="date" class="form-input" />
+          </div>
+          <div>
+            <label class="form-label">หมายเลขพาสปอร์ต</label>
+            <input id="passportNo" class="form-input" placeholder="AA123456" />
+          </div>
+          <div class="col-span-2">
+            <label class="form-label">หมายเหตุ</label>
+            <textarea id="notes" class="form-input resize-none h-20" placeholder="Allergies, VIP, preferences…"></textarea>
+          </div>
 
-        <div class="form-grid">
-          <div class="field">
-            <label>First Name *</label>
-            <input id="firstName" required placeholder="John" />
-          </div>
-          <div class="field">
-            <label>Last Name *</label>
-            <input id="lastName" required placeholder="Doe" />
-          </div>
-          <div class="field full">
-            <label>Email *</label>
-            <input id="email" type="email" required placeholder="john@example.com" />
-          </div>
-          <div class="field">
-            <label>Phone</label>
-            <input id="phone" placeholder="+66 81 234 5678" />
-          </div>
-          <div class="field">
-            <label>Nationality</label>
-            <input id="nationality" placeholder="Thai" />
-          </div>
-          <div class="field">
-            <label>Passport / ID No.</label>
-            <input id="passportNo" placeholder="AA123456" />
-          </div>
-          <div class="field">
-            <label>Date of Birth</label>
-            <input id="dob" type="date" />
-          </div>
-          <div class="field full">
-            <label>Notes</label>
-            <textarea id="notes" placeholder="Allergies, preferences, VIP status…"></textarea>
-          </div>
-
-          <!-- OTP — shown for existing guests only -->
-          <div class="field full" id="otpSection" style="display:none;">
-            <hr class="section-divider" />
-            <div class="otp-section">
-              <div class="otp-label">📧 Email Verification (OTP)</div>
-              <div class="otp-row">
-                <input id="otpCode" maxlength="6" placeholder="• • • • • •" />
-                <button type="button" class="btn btn-amber btn-sm" onclick="sendOTP()">Send OTP</button>
-                <button type="button" class="btn btn-green btn-sm" onclick="verifyOTP()">Verify</button>
+          <!-- OTP section: shown only when editing existing guest -->
+          <div id="otpSection" class="col-span-2 hidden">
+            <div class="border-t border-slate-100 pt-4 mt-1">
+              <label class="form-label">📧 ยืนยันอีเมล (OTP)</label>
+              <div class="flex gap-2 items-center mt-1.5">
+                <input id="otpCode" class="form-input font-mono tracking-widest text-center text-lg"
+                       maxlength="6" placeholder="• • • • • •" style="max-width:140px" />
+                <button type="button" class="btn-secondary text-xs" onclick="sendOTP()">📨 ส่ง OTP</button>
+                <button type="button" class="btn-primary  text-xs" onclick="verifyOTP()">✅ ยืนยัน</button>
               </div>
             </div>
           </div>
         </div>
+        <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-slate-100">
+          <button type="button" class="btn-secondary" onclick="closeModal('guestModal')">ยกเลิก</button>
+          <button type="submit" class="btn-primary">💾 บันทึก</button>
+        </div>
       </form>
-    </div>
-
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-navy" onclick="document.getElementById('guestForm').requestSubmit()">
-        Save Guest
-      </button>
     </div>
   </div>
 </div>
 
-<div id="toast"></div>
+<!-- ═══════════════════════════════════ MODAL: ADD/EDIT STAY ═══════ -->
+<div id="stayModal" class="modal-backdrop hidden">
+  <div class="modal-box">
+    <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100">
+      <h3 class="font-bold text-slate-800" id="stayModalTitle">เพิ่มประวัติการเข้าพัก</h3>
+      <button onclick="closeModal('stayModal')"
+              class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold">✕</button>
+    </div>
+    <div class="px-6 py-5">
+      <form id="stayForm" onsubmit="saveStay(event)">
+        <input type="hidden" id="stayId" />
+        <div class="grid grid-cols-2 gap-4">
+          <div class="col-span-2">
+            <label class="form-label">แขก *</label>
+            <select id="stayGuestId" class="form-input" required>
+              <option value="">— เลือกแขก —</option>
+            </select>
+          </div>
+          <div class="col-span-2">
+            <label class="form-label">สาขา *</label>
+            <select id="stayBranchId" class="form-input" required>
+              <option value="">— เลือกสาขา —</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">วันที่ Check-in *</label>
+            <input id="stayCheckIn" type="date" class="form-input" required />
+          </div>
+          <div>
+            <label class="form-label">จำนวนคืน *</label>
+            <input id="stayNights" type="number" min="1" class="form-input" required placeholder="2" />
+          </div>
+          <div class="col-span-2">
+            <label class="form-label">Preferences / ความต้องการพิเศษ</label>
+            <textarea id="stayPreferences" class="form-input resize-none h-16" placeholder="วิวทะเล, ห้องชั้นสูง, แพ้อาหารทะเล…"></textarea>
+          </div>
+          <div class="col-span-2">
+            <label class="form-label">Notes (Staff)</label>
+            <textarea id="stayNotes" class="form-input resize-none h-16" placeholder="หมายเหตุสำหรับ staff…"></textarea>
+          </div>
+        </div>
+        <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-slate-100">
+          <button type="button" class="btn-secondary" onclick="closeModal('stayModal')">ยกเลิก</button>
+          <button type="submit" class="btn-primary">💾 บันทึก</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ MODAL: GUEST STAYS ══════════ -->
+<div id="guestStaysModal" class="modal-backdrop hidden">
+  <div class="modal-box max-w-2xl">
+    <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100">
+      <h3 class="font-bold text-slate-800" id="guestStaysTitle">ประวัติการเข้าพัก</h3>
+      <button onclick="closeModal('guestStaysModal')"
+              class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold">✕</button>
+    </div>
+    <div class="px-6 py-5" id="guestStaysContent">
+      <div class="flex justify-center py-8"><div class="spinner"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast">🔔 <span id="toastMsg"></span></div>
 
 <script src="app.js"></script>
 </body>

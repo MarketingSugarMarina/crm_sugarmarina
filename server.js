@@ -16,8 +16,9 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // API Routes
-app.use('/api/guests', require('./routes/guests'));
-app.use('/api/otp', require('./routes/otp'));
+app.use('/api/guests',   require('./routes/guests'));
+app.use('/api/otp',      require('./routes/otp'));
+app.use('/api/branches', require('./routes/branches'));
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
