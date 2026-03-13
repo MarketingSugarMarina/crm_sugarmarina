@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sugar Marina — Guest CRM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Reset & Base ───────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy-900: #0D1B2A;
+      --navy-800: #162236;
+      --navy-700: #1E3050;
+      --navy-600: #26406A;
+      --navy-400: #3D6090;
+      --navy-200: #8BA5C8;
+      --navy-100: #D6E3F3;
+      --navy-50:  #EEF4FB;
+
+      --gold:     #C9A227;
+      --gold-lt:  #F5E6B8;
+
+      --green:    #2ECC71;
+      --green-lt: #D5F5E3;
+      --red:      #E74C3C;
+      --red-lt:   #FDECEA;
+      --amber:    #F39C12;
+      --amber-lt: #FEF3CD;
+
+      --bg:       #F0F4F9;
+      --surface:  #FFFFFF;
+      --border:   #DDE6F0;
+      --text:     #1A2B3C;
+      --muted:    #6B829E;
+
+      --sidebar-w: 240px;
+      --radius:   10px;
+      --shadow:   0 2px 12px rgba(13,27,42,.10);
+      --shadow-lg:0 8px 32px rgba(13,27,42,.16);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* ── Sidebar ────────────────────────────────────────────────────────────── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--navy-900);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 50;
+    }
+
+    .sidebar-brand {
+      padding: 24px 20px 20px;
+      border-bottom: 1px solid var(--navy-700);
+    }
+    .sidebar-brand .hotel-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.3px;
+      line-height: 1.3;
+    }
+    .sidebar-brand .hotel-sub {
+      font-size: 0.7rem;
+      color: var(--navy-200);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    .sidebar-section {
+      padding: 20px 12px 8px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--navy-400);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      margin: 2px 8px;
+      border-radius: 8px;
+      color: var(--navy-200);
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+      text-decoration: none;
+    }
+    .nav-item:hover        { background: var(--navy-800); color: #fff; }
+    .nav-item.active       { background: var(--navy-600); color: #fff; }
+    .nav-item .nav-icon    { font-size: 1rem; width: 20px; text-align: center; }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 16px 20px;
+      border-top: 1px solid var(--navy-700);
+      font-size: 0.72rem;
+      color: var(--navy-400);
+      line-height: 1.6;
+    }
+
+    /* ── Main Content ───────────────────────────────────────────────────────── */
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* ── Top Bar ────────────────────────────────────────────────────────────── */
+    .topbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+    .topbar-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--navy-900);
+    }
+    .topbar-sub {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--navy-700);
+      color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    /* ── Page Body ──────────────────────────────────────────────────────────── */
+    .page { padding: 28px 32px; }
+
+    /* ── Stats Cards ────────────────────────────────────────────────────────── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .stat-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border-left: 4px solid transparent;
+    }
+    .stat-card.c-navy   { border-color: var(--navy-600); }
+    .stat-card.c-green  { border-color: var(--green); }
+    .stat-card.c-gold   { border-color: var(--gold); }
+    .stat-card.c-red    { border-color: var(--red); }
+
+    .stat-icon {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    .c-navy  .stat-icon { background: var(--navy-50);  }
+    .c-green .stat-icon { background: var(--green-lt); }
+    .c-gold  .stat-icon { background: var(--gold-lt);  }
+    .c-red   .stat-icon { background: var(--red-lt);   }
+
+    .stat-info .stat-val {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--navy-900);
+      line-height: 1;
+    }
+    .stat-info .stat-lbl {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    /* ── Toolbar ────────────────────────────────────────────────────────────── */
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .search-wrap {
+      position: relative;
+      flex: 1;
+      min-width: 220px;
+    }
+    .search-wrap .search-icon {
+      position: absolute;
+      left: 12px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 0.9rem;
+      pointer-events: none;
+    }
+    .search-wrap input {
+      width: 100%;
+      padding: 10px 14px 10px 36px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      background: var(--surface);
+      color: var(--text);
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .search-wrap input:focus {
+      outline: none;
+      border-color: var(--navy-600);
+      box-shadow: 0 0 0 3px rgba(38,64,106,.12);
+    }
+
+    /* ── Buttons ────────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 600;
+      font-family: inherit;
+      transition: filter .15s, transform .1s;
+      white-space: nowrap;
+    }
+    .btn:hover  { filter: brightness(1.08); }
+    .btn:active { transform: scale(.97); }
+
+    .btn-navy    { background: var(--navy-700); color: #fff; }
+    .btn-green   { background: #27AE60; color: #fff; }
+    .btn-red     { background: #E74C3C; color: #fff; }
+    .btn-amber   { background: var(--amber); color: #fff; }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .btn-sm { padding: 6px 12px; font-size: 0.8rem; border-radius: 6px; }
+
+    /* ── Table Card ─────────────────────────────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card-header h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--navy-900);
+    }
+    .card-header span {
+      font-size: 0.78rem;
+      color: var(--muted);
+      background: var(--navy-50);
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      background: var(--navy-50);
+      color: var(--navy-600);
+      padding: 11px 16px;
+      text-align: left;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      border-bottom: 1px solid var(--border);
+    }
+    tbody td {
+      padding: 13px 16px;
+      font-size: 0.875rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: middle;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: var(--navy-50); }
+
+    .guest-name strong { font-weight: 600; color: var(--navy-900); }
+    .guest-name small  { display: block; font-size: 0.75rem; color: var(--muted); margin-top: 1px; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+    .badge::before { content: '●'; font-size: 0.5rem; }
+    .badge-verified   { background: var(--green-lt); color: #1E8449; }
+    .badge-unverified { background: var(--red-lt);   color: #C0392B; }
+
+    .action-group { display: flex; gap: 6px; }
+
+    /* ── Modal ──────────────────────────────────────────────────────────────── */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(13,27,42,.55);
+      backdrop-filter: blur(3px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.active { display: flex; }
+
+    .modal {
+      background: var(--surface);
+      border-radius: 14px;
+      width: 100%;
+      max-width: 540px;
+      max-height: 92vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+      animation: slideUp .2s ease;
+    }
+    @keyframes slideUp {
+      from { opacity:0; transform: translateY(20px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+
+    .modal-header {
+      padding: 22px 28px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-header h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--navy-900);
+    }
+    .modal-close {
+      background: var(--navy-50);
+      border: none;
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1rem;
+      color: var(--muted);
+      display: flex; align-items: center; justify-content: center;
+      transition: background .15s;
+    }
+    .modal-close:hover { background: var(--border); }
+
+    .modal-body { padding: 20px 28px 28px; }
+
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-grid .full { grid-column: 1 / -1; }
+
+    .field label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .field input,
+    .field textarea,
+    .field select {
+      width: 100%;
+      padding: 9px 13px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      color: var(--text);
+      background: var(--surface);
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .field input:focus,
+    .field textarea:focus {
+      outline: none;
+      border-color: var(--navy-600);
+      box-shadow: 0 0 0 3px rgba(38,64,106,.12);
+    }
+    .field textarea { resize: vertical; min-height: 72px; }
+
+    /* OTP section */
+    .otp-section {
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
+      margin-top: 4px;
+    }
+    .otp-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    .otp-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .otp-row input {
+      width: 130px;
+      letter-spacing: 6px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-align: center;
+      padding: 9px 13px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      color: var(--navy-900);
+    }
+
+    .modal-footer {
+      padding: 0 28px 24px;
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    /* ── Divider ────────────────────────────────────────────────────────────── */
+    .section-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 18px 0 4px;
+    }
+
+    /* ── Toast ──────────────────────────────────────────────────────────────── */
+    #toast {
+      position: fixed;
+      bottom: 28px; right: 28px;
+      background: var(--navy-800);
+      color: #fff;
+      padding: 13px 20px;
+      border-radius: 10px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity .25s, transform .25s;
+      z-index: 999;
+      max-width: 320px;
+      box-shadow: var(--shadow-lg);
+      border-left: 4px solid var(--gold);
+    }
+    #toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ── Empty State ─────────────────────────────────────────────────────────── */
+    .empty-state {
+      text-align: center;
+      padding: 56px 20px;
+      color: var(--muted);
+    }
+    .empty-state .empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
+    .empty-state p { font-size: 0.9rem; }
+
+    /* ── Scrollbar ──────────────────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--navy-100); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<!-- ── Sidebar ───────────────────────────────────────────────────────────── -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div style="font-size:1.5rem;margin-bottom:8px;">⚓</div>
+    <div class="hotel-name">Sugar Marina<br/>Hotel Collection</div>
+    <div class="hotel-sub">CRM System</div>
+  </div>
+
+  <div class="sidebar-section">Main Menu</div>
+  <a class="nav-item active" href="#">
+    <span class="nav-icon">👥</span> Guest List
+  </a>
+  <a class="nav-item" href="#">
+    <span class="nav-icon">🏨</span> Branches
+  </a>
+  <a class="nav-item" href="#">
+    <span class="nav-icon">📅</span> Stays
+  </a>
+  <a class="nav-item" href="#">
+    <span class="nav-icon">📊</span> Reports
+  </a>
+
+  <div class="sidebar-section">Settings</div>
+  <a class="nav-item" href="#">
+    <span class="nav-icon">⚙️</span> Configuration
+  </a>
+
+  <div class="sidebar-footer">
+    Sugar Marina Hotel<br/>
+    Kata Beach, Phuket
+  </div>
+</aside>
+
+<!-- ── Main ──────────────────────────────────────────────────────────────── -->
+<div class="main">
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">Guest Management</div>
+      <div class="topbar-sub">Front Desk Dashboard</div>
+    </div>
+    <div class="topbar-right">
+      <div style="text-align:right;margin-right:4px;">
+        <div style="font-size:0.82rem;font-weight:600;color:var(--navy-900);">Reception</div>
+        <div style="font-size:0.72rem;color:var(--muted);">Front Desk</div>
+      </div>
+      <div class="avatar">FD</div>
+    </div>
+  </div>
+
+  <!-- Page -->
+  <div class="page">
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card c-navy">
+        <div class="stat-icon">👥</div>
+        <div class="stat-info">
+          <div class="stat-val" id="statTotal">—</div>
+          <div class="stat-lbl">Total Guests</div>
+        </div>
+      </div>
+      <div class="stat-card c-green">
+        <div class="stat-icon">✅</div>
+        <div class="stat-info">
+          <div class="stat-val" id="statVerified">—</div>
+          <div class="stat-lbl">Verified Email</div>
+        </div>
+      </div>
+      <div class="stat-card c-gold">
+        <div class="stat-icon">🌏</div>
+        <div class="stat-info">
+          <div class="stat-val" id="statNat">—</div>
+          <div class="stat-lbl">Nationalities</div>
+        </div>
+      </div>
+      <div class="stat-card c-red">
+        <div class="stat-icon">⏳</div>
+        <div class="stat-info">
+          <div class="stat-val" id="statUnverified">—</div>
+          <div class="stat-lbl">Pending Verify</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput"
+               placeholder="ค้นหาตามชื่อ, อีเมล, โทรศัพท์…"
+               oninput="debounceSearch()" />
+      </div>
+      <button class="btn btn-outline" onclick="loadGuests()">Search</button>
+      <button class="btn btn-navy" onclick="openAddModal()">＋ Add Guest</button>
+    </div>
+
+    <!-- Guest Table -->
+    <div class="card">
+      <div class="card-header">
+        <h3>Guest Directory</h3>
+        <span id="guestCount">0 guests</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Guest</th>
+            <th>Phone</th>
+            <th>Nationality</th>
+            <th>Birthday</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="guestBody">
+          <tr>
+            <td colspan="7">
+              <div class="empty-state">
+                <div class="empty-icon">⏳</div>
+                <p>Loading guests…</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div><!-- /page -->
+</div><!-- /main -->
+
+<!-- ── Modal: Add / Edit Guest ──────────────────────────────────────────── -->
+<div class="modal-overlay" id="guestModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modalTitle">Add New Guest</h2>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <form id="guestForm" onsubmit="saveGuest(event)">
+        <input type="hidden" id="guestId" />
+
+        <div class="form-grid">
+          <div class="field">
+            <label>First Name *</label>
+            <input id="firstName" required placeholder="John" />
+          </div>
+          <div class="field">
+            <label>Last Name *</label>
+            <input id="lastName" required placeholder="Doe" />
+          </div>
+          <div class="field full">
+            <label>Email *</label>
+            <input id="email" type="email" required placeholder="john@example.com" />
+          </div>
+          <div class="field">
+            <label>Phone</label>
+            <input id="phone" placeholder="+66 81 234 5678" />
+          </div>
+          <div class="field">
+            <label>Nationality</label>
+            <input id="nationality" placeholder="Thai" />
+          </div>
+          <div class="field">
+            <label>Passport / ID No.</label>
+            <input id="passportNo" placeholder="AA123456" />
+          </div>
+          <div class="field">
+            <label>Date of Birth</label>
+            <input id="dob" type="date" />
+          </div>
+          <div class="field full">
+            <label>Notes</label>
+            <textarea id="notes" placeholder="Allergies, preferences, VIP status…"></textarea>
+          </div>
+
+          <!-- OTP — shown for existing guests only -->
+          <div class="field full" id="otpSection" style="display:none;">
+            <hr class="section-divider" />
+            <div class="otp-section">
+              <div class="otp-label">📧 Email Verification (OTP)</div>
+              <div class="otp-row">
+                <input id="otpCode" maxlength="6" placeholder="• • • • • •" />
+                <button type="button" class="btn btn-amber btn-sm" onclick="sendOTP()">Send OTP</button>
+                <button type="button" class="btn btn-green btn-sm" onclick="verifyOTP()">Verify</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-navy" onclick="document.getElementById('guestForm').requestSubmit()">
+        Save Guest
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
